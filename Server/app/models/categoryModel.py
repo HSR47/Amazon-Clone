@@ -12,6 +12,8 @@ class ProdCategory(Base):
 
     id = Column(Integer , primary_key=True)
     name = Column(String , nullable=False , unique=True)
+    createdAt = Column(DateTime , default=datetime.utcnow)
+    updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     # products = relationship("Product", back_populates="category")
 # ------------------------------------------------------------------
@@ -23,4 +25,6 @@ class BlogCategory(Base):
 
     id = Column(Integer , primary_key=True)
     name = Column(String , nullable=False , unique=True)
+    createdAt = Column(DateTime , default=datetime.utcnow)
+    updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 # ------------------------------------------------------------------
