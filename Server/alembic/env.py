@@ -25,6 +25,7 @@ from app.models import userModel
 from app.models import productModel
 from app.models import ratingModel
 from app.models import blogModel
+import app.models.likeDislikeModel
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column , Integer , String , Boolean , DateTime
+from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
@@ -16,11 +16,17 @@ class Product(Base):
     price = Column(Integer , nullable=False)
     quantity = Column(Integer , nullable=False)
     sold = Column(Integer , default=0)
-    color = Column(String)
-    brand = Column(String)
-    category = Column(String)
+    color = Column(String , unique=True)
+    brand = Column(String , unique=True)
+    category = Column(String , unique=True)
+    # categoryId = Column(Integer , ForeignKey("product_categories.id"))
     # images
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     ratings = relationship("Rating" , back_populates="product")
+    # category = relationship("ProdCategory" , back_populates="products")
+
+    # @property
+    # def categoryName(self):
+    #     return self.category.name

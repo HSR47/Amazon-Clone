@@ -1,24 +1,26 @@
 
-from typing import Any
+from typing import Any, Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
+
+from app.schemas.userSchema import returnUser
 
 
 class createBlogRequest(BaseModel):
     title : str
     description : str
     category : str
-    views : int | None
-    isLiked : bool | None
-    isDisliked : bool | None
-    image : str | None
 
     @validator("title" , "description" , "category")
     def validateStrip(cls , value:str):
+        if value == None:
+            return value
         return value.strip()
 
     @validator("title" , "description" , "category")
     def validateLowerCase(cls , value:str):
+        if value == None:
+            return value
         return value.lower()
 
 
@@ -29,13 +31,32 @@ class returnBlog(BaseModel):
     title : str
     description : str
     category : str
-    views : int | None
-    isLiked : bool | None
-    isDisliked : bool | None
-    image : str | None
-    author : Any
+    image : str
+    views : int
+    author : returnUser
     createdAt : datetime
     updatedAt : datetime
+    likedBy : list[int]
+    dislikedBy : list[int]
 
-    class Config:
+    class Config():
         from_attributes = True
+
+
+
+class updateBlogRequest(BaseModel):
+    title : Optional[str] = Field(default=None)
+    description : Optional[str] = Field(default=None)
+    category : Optional[str] = Field(default=None)
+
+    @validator("title" , "description" , "category")
+    def validateStrip(cls , value:str):
+        if value == None:
+            return value
+        return value.strip()
+
+    @validator("title" , "description" , "category")
+    def validateLowerCase(cls , value:str):
+        if value == None:
+            return value
+        return value.lower()

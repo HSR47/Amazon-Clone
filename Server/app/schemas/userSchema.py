@@ -1,4 +1,5 @@
 
+from typing import Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
@@ -45,16 +46,20 @@ class returnUser(BaseModel):
 
 
 class updateUser(BaseModel):
-    fname : str | None
-    lname : str | None
-    mobile : str | None  = Field(pattern=r"^[0-9]{10}$")
+    fname : Optional[str] = Field(default=None)
+    lname : Optional[str] = Field(default=None)
+    mobile : Optional[str] = Field(default=None , pattern=r"^[0-9]{10}$")
 
     @validator("fname" , "lname" , "mobile")
     def validateStrip(cls , value:str):
+        if value == None:
+            return value
         return value.strip()
 
     @validator("fname" , "lname")
     def validateOneWord(cls , value:str):
+        if value == None:
+            return value
         if " " in value:
             raise ValueError("fname and lname must contain only one word")
         
@@ -62,4 +67,6 @@ class updateUser(BaseModel):
 
     @validator("fname" , "lname")
     def validateLowerCase(cls , value:str):
+        if value == None:
+            return value
         return value.lower()

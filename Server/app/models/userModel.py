@@ -3,6 +3,8 @@ from sqlalchemy import Column , Integer , String , Boolean , DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
+from app.models.blogModel import Blog
+from app.models.likeDislikeModel import Like , Dislike
 
 class User(Base):
     __tablename__ = "users"
@@ -21,4 +23,6 @@ class User(Base):
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
-    blogs = relationship("Blog" , back_populates="author")
+    blogs = relationship("Blog" , back_populates="author" , cascade="all, delete")
+    likes = relationship("Like" , back_populates="user" , cascade="all, delete")
+    dislikes = relationship("Dislike" , back_populates="user" , cascade="all, delete")
