@@ -6,6 +6,7 @@ from app.routers.product import prodRouter
 from app.routers.blog import blogRouter
 from app.routers.category import catRouter
 from app.routers.brand import brandRouter
+from app.routers.wishlist import wishRouter
 
 import app.database
 
@@ -16,6 +17,7 @@ app.include_router(prodRouter)
 app.include_router(blogRouter)
 app.include_router(catRouter)
 app.include_router(brandRouter)
+app.include_router(wishRouter)
 
 @app.get("/")
 def home():

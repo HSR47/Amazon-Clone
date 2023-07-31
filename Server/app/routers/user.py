@@ -54,11 +54,11 @@ def getAllUsers(curUser:User = Depends(get_current_user) , db:Session = Depends(
 @userRouter.get("/user/{id}" , response_model=userSchema.returnUser)
 def getSpecificUser(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
-    user = db.query(User).filter(User.id == id).first()
+    user:User = db.query(User).filter(User.id == id).first()
 
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="user not found")
-
+    
     return user
 # ------------------------------------------------------------------
 

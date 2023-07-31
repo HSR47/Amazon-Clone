@@ -28,6 +28,7 @@ from app.models import blogModel
 import app.models.likeDislikeModel
 import app.models.categoryModel
 import app.models.brandModel
+import app.models.wishlistModel
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

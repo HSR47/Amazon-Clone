@@ -5,6 +5,7 @@ from datetime import datetime
 from app.models import Base
 from app.models.blogModel import Blog
 from app.models.likeDislikeModel import Like , Dislike
+from app.models.wishlistModel import Wishlist
 
 class User(Base):
     __tablename__ = "users"
@@ -26,3 +27,8 @@ class User(Base):
     blogs = relationship("Blog" , back_populates="author" , cascade="all, delete")
     likes = relationship("Like" , back_populates="user" , cascade="all, delete")
     dislikes = relationship("Dislike" , back_populates="user" , cascade="all, delete")
+
+    wishlists = relationship("Wishlist" , back_populates="user" , cascade="all, delete")
+    @property
+    def wishlistProducts(self):
+        return [wishlist.productId for wishlist in self.wishlists]

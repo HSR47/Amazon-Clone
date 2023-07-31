@@ -39,6 +39,7 @@ class returnUser(BaseModel):
     blocked : bool
     createdAt : datetime
     updatedAt : datetime
+    wishlistProducts : list[int]
 
     class Config:
         from_attributes = True

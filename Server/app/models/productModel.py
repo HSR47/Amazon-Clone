@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
 from app.models.ratingModel import Rating
+from app.models.wishlistModel import Wishlist
 
 
 class Product(Base):
@@ -38,3 +39,5 @@ class Product(Base):
         if self.categoryId == None:
             return None
         return self.category.name
+    
+    wishlists = relationship("Wishlist" , back_populates="product" , cascade="all, delete")
