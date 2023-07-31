@@ -1,5 +1,6 @@
 
 from typing import Optional
+from click import Option
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
@@ -10,17 +11,17 @@ class addProduct(BaseModel):
     price : int
     quantity : int
     sold : Optional[int] = Field(default=0)
-    color : Optional[str]
-    brand : Optional[str]
-    category : Optional[str]
+    color : Optional[str] = Field(default=None)
+    brand : Optional[str] = Field(default=None)
+    categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "color" , "brand" , "category")
+    @validator("title" , "description" , "color" , "brand")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "color" , "brand" , "category")
+    @validator("title" , "description" , "color" , "brand")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value
@@ -37,8 +38,9 @@ class returnProduct(BaseModel):
     sold : int | None
     color : str | None
     brand : str | None
-    category : str | None
     ratings : list
+    # categoryId : int | None
+    categoryName : str | None
     createdAt : datetime
     updatedAt : datetime
 
@@ -54,15 +56,15 @@ class updateProduct(BaseModel):
     sold : Optional[int] = Field(default=0)
     color : Optional[str]
     brand : Optional[str]
-    category : Optional[str]
+    categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "color" , "brand" , "category")
+    @validator("title" , "description" , "color" , "brand")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "color" , "brand" , "category")
+    @validator("title" , "description" , "color" , "brand")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value

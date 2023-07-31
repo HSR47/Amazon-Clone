@@ -9,15 +9,15 @@ from app.schemas.userSchema import returnUser
 class createBlogRequest(BaseModel):
     title : str
     description : str
-    category : str
+    categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "category")
+    @validator("title" , "description")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "category")
+    @validator("title" , "description")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value
@@ -30,7 +30,7 @@ class returnBlog(BaseModel):
     userId : int
     title : str
     description : str
-    category : str
+    categoryName : str | None
     image : str
     views : int
     author : returnUser
@@ -47,15 +47,15 @@ class returnBlog(BaseModel):
 class updateBlogRequest(BaseModel):
     title : Optional[str] = Field(default=None)
     description : Optional[str] = Field(default=None)
-    category : Optional[str] = Field(default=None)
+    categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "category")
+    @validator("title" , "description")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "category")
+    @validator("title" , "description")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value

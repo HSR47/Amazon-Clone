@@ -16,17 +16,18 @@ class Product(Base):
     price = Column(Integer , nullable=False)
     quantity = Column(Integer , nullable=False)
     sold = Column(Integer , default=0)
-    color = Column(String , unique=True)
-    brand = Column(String , unique=True)
-    category = Column(String , unique=True)
-    # categoryId = Column(Integer , ForeignKey("product_categories.id"))
+    color = Column(String)
+    brand = Column(String)
     # images
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     ratings = relationship("Rating" , back_populates="product")
-    # category = relationship("ProdCategory" , back_populates="products")
 
-    # @property
-    # def categoryName(self):
-    #     return self.category.name
+    categoryId = Column(Integer , ForeignKey("product_categories.id"))
+    category = relationship("ProdCategory" , back_populates="products")
+    @property
+    def categoryName(self):
+        if self.categoryId == None:
+            return None
+        return self.category.name

@@ -15,7 +15,7 @@ class ProdCategory(Base):
     createdAt = Column(DateTime , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
-    # products = relationship("Product", back_populates="category")
+    products = relationship("Product", back_populates="category")
 # ------------------------------------------------------------------
 
 
@@ -27,4 +27,6 @@ class BlogCategory(Base):
     name = Column(String , nullable=False , unique=True)
     createdAt = Column(DateTime , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
+
+    blogs = relationship("Blog", back_populates="category")
 # ------------------------------------------------------------------

@@ -4,6 +4,7 @@ from fastapi import APIRouter , Depends , HTTPException , status
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.blogModel import Blog
+from app.models.categoryModel import BlogCategory
 from app.models.likeDislikeModel import Dislike, Like
 
 from app.models.userModel import User
@@ -19,11 +20,16 @@ blogRouter = APIRouter(tags=["Blog"])
 @blogRouter.post("/blog" , response_model=blogSchema.returnBlog)
 def createBlog(data:blogSchema.createBlogRequest , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
+    if data.categoryId != None:
+        checkCategory = db.query(BlogCategory).filter(BlogCategory.id == data.categoryId).first()
+        if checkCategory == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
+
     blog = Blog(
         userId = curUser.id,
         title = data.title,
         description = data.description,
-        category = data.category
+        categoryId = data.categoryId
     )
 
     db.add(blog)
@@ -68,12 +74,17 @@ def updateBlog(id:int , data:blogSchema.updateBlogRequest , curUser:User = Depen
     if blog.userId != curUser.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="not allowed")
 
+    if data.categoryId != None:
+        checkCategory = db.query(BlogCategory).filter(BlogCategory.id == data.categoryId).first()
+        if checkCategory == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
+
     if data.title != None:
         blog.title = data.title
     if data.description != None:
         blog.description = data.description
-    if data.category != None:
-        blog.category = data.category
+    if data.categoryId != None:
+        blog.category = data.categoryId
     
     db.commit()
     db.refresh(blog)

@@ -3,6 +3,7 @@ from fastapi import APIRouter , Depends , HTTPException, Query , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
+from app.models.categoryModel import ProdCategory
 from app.models.productModel import Product
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_user
@@ -15,7 +16,7 @@ prodRouter = APIRouter(tags=["Product"])
 
 
 # ----------------------------ADD PRODUCT-------------------------
-@prodRouter.post("/product")
+@prodRouter.post("/product" , response_model=productSchema.returnProduct)
 def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     slug = slugify(data.title)
@@ -23,6 +24,11 @@ def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_curre
     check = db.query(Product).filter(Product.slug == slug).first()
     if check != None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="slug already exists")
+
+    if data.categoryId != None:
+        checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
+        if checkCategory == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
 
     newProduct:Product = Product(
         title = data.title,
@@ -32,7 +38,8 @@ def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_curre
         quantity = data.quantity,
         sold = data.sold,
         color = data.color,
-        brand = data.brand
+        brand = data.brand,
+        categoryId = data.categoryId
     )
 
     db.add(newProduct)
@@ -89,7 +96,7 @@ def getSpecificProduct(id:int , db:Session = Depends(getDb)):
 
 
 # ----------------------------UPDATE PRODUCT-------------------------
-@prodRouter.patch("/product/{id}")
+@prodRouter.patch("/product/{id}" , response_model=productSchema.returnProduct)
 def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     product:Product = db.query(Product).filter(Product.id == id).first()
@@ -105,6 +112,10 @@ def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = De
         if check != None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="slug already exists")
 
+    if data.categoryId != None:
+        checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
+        if checkCategory == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
 
     if data.title != None:
         product.title = data.title
@@ -127,6 +138,9 @@ def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = De
 
     if data.sold != None:
         product.sold = data.sold
+    
+    if data.categoryId != None:
+        product.categoryId = data.categoryId
 
     db.commit()
     db.refresh(product)
