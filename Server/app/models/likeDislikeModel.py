@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
 
+# ----------------------------LIKE MODEL-------------------------
 class Like(Base):
     __tablename__ = "likes"
 
@@ -13,8 +14,10 @@ class Like(Base):
 
     user = relationship("User" , back_populates="likes")
     blog = relationship("Blog" , back_populates="likes")
+# ------------------------------------------------------------------
 
 
+# ----------------------------DISLIKE MODEL-------------------------
 class Dislike(Base):
     __tablename__ = "dislikes"
 
@@ -24,3 +27,6 @@ class Dislike(Base):
 
     user = relationship("User" , back_populates="dislikes")
     blog = relationship("Blog" , back_populates="dislikes")
+# ------------------------------------------------------------------
+
+

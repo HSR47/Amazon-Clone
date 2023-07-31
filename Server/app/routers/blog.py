@@ -10,8 +10,6 @@ from app.models.likeDislikeModel import Dislike, Like
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_user
 import app.schemas.blogSchema as blogSchema
-import app.schemas.userSchema as userSchema
-import app.utils.passlib as passlib
 
 blogRouter = APIRouter(tags=["Blog"])
 

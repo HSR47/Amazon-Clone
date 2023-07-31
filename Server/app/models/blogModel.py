@@ -30,13 +30,13 @@ class Blog(Base):
         return self.category.name
 
     
-    likes = relationship("Like" , back_populates="blog")
+    likes = relationship("Like" , back_populates="blog" , cascade="all, delete")
     @property
     def likedBy(self):
         return [like.userId for like in self.likes]
     
     
-    dislikes = relationship("Dislike" , back_populates="blog")
+    dislikes = relationship("Dislike" , back_populates="blog" , cascade="all, delete")
     @property
     def dislikedBy(self):
         return [dislike.userId for dislike in self.dislikes]

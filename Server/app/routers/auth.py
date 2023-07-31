@@ -9,7 +9,6 @@ from sqlalchemy.orm.session import Session
 
 from app.config import settings
 from app.models.userModel import User
-from app.schemas.userSchema import returnUser
 from app.utils.email import sendMail
 from app.utils.jwt import create_access_token, create_refresh_token, verify_token
 from app.utils.passlib import hashPassword, verifyPassword

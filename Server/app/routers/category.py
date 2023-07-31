@@ -5,14 +5,10 @@ from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.blogModel import Blog
 from app.models.categoryModel import BlogCategory, ProdCategory
-from app.models.likeDislikeModel import Dislike, Like
 
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_user
-import app.schemas.blogSchema as blogSchema
-import app.schemas.userSchema as userSchema
 import app.schemas.categorySchema as categorySchema
-import app.utils.passlib as passlib
 
 catRouter = APIRouter(tags=["Category"])
 
