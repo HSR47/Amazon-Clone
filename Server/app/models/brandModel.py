@@ -15,4 +15,5 @@ class Brand(Base):
     createdAt = Column(DateTime , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
+    products = relationship("Product" , back_populates="brand" , cascade="all, delete")
 # ------------------------------------------------------------------

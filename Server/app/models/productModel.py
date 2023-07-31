@@ -17,12 +17,19 @@ class Product(Base):
     quantity = Column(Integer , nullable=False)
     sold = Column(Integer , default=0)
     color = Column(String)
-    brand = Column(String)
     # images
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     ratings = relationship("Rating" , back_populates="product")
+
+    brandId = Column(Integer , ForeignKey("brands.id"))
+    brand = relationship("Brand" , back_populates="products")
+    @property
+    def brandName(self):
+        if self.brand == None:
+            return None
+        return self.brand.name
 
     categoryId = Column(Integer , ForeignKey("product_categories.id"))
     category = relationship("ProdCategory" , back_populates="products")

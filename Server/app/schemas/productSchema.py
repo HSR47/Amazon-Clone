@@ -12,16 +12,16 @@ class addProduct(BaseModel):
     quantity : int
     sold : Optional[int] = Field(default=0)
     color : Optional[str] = Field(default=None)
-    brand : Optional[str] = Field(default=None)
+    brandId : Optional[int] = Field(default=None)
     categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "color" , "brand")
+    @validator("title" , "description" , "color")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "color" , "brand")
+    @validator("title" , "description" , "color")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value
@@ -37,9 +37,8 @@ class returnProduct(BaseModel):
     quantity : int
     sold : int | None
     color : str | None
-    brand : str | None
     ratings : list
-    # categoryId : int | None
+    brandName : str | None
     categoryName : str | None
     createdAt : datetime
     updatedAt : datetime
@@ -54,17 +53,17 @@ class updateProduct(BaseModel):
     price : int | None
     quantity : int | None
     sold : Optional[int] = Field(default=0)
-    color : Optional[str]
-    brand : Optional[str]
+    color : Optional[str] = Field(default=None)
+    brandId : Optional[int] = Field(default=None)
     categoryId : Optional[int] = Field(default=None)
 
-    @validator("title" , "description" , "color" , "brand")
+    @validator("title" , "description" , "color")
     def validateStrip(cls , value:str):
         if value == None:
             return value
         return value.strip()
 
-    @validator("title" , "description" , "color" , "brand")
+    @validator("title" , "description" , "color")
     def validateLowerCase(cls , value:str):
         if value == None:
             return value

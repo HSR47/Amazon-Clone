@@ -3,6 +3,7 @@ from fastapi import APIRouter , Depends , HTTPException, Query , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
+from app.models.brandModel import Brand
 from app.models.categoryModel import ProdCategory
 from app.models.productModel import Product
 from app.models.userModel import User
@@ -29,6 +30,11 @@ def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_curre
         checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
         if checkCategory == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
+        
+    if data.brandId != None:
+        checkBrand = db.query(Brand).filter(Brand.id == data.brandId).first()
+        if checkBrand == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
 
     newProduct:Product = Product(
         title = data.title,
@@ -38,7 +44,7 @@ def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_curre
         quantity = data.quantity,
         sold = data.sold,
         color = data.color,
-        brand = data.brand,
+        brandId = data.brandId,
         categoryId = data.categoryId
     )
 
@@ -117,6 +123,12 @@ def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = De
         if checkCategory == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
 
+    if data.brandId != None:
+        checkBrand = db.query(Brand).filter(Brand.id == data.brandId).first()
+        if checkBrand == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
+        
+        
     if data.title != None:
         product.title = data.title
         product.slug = slug
@@ -133,8 +145,8 @@ def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = De
     if data.color != None:
         product.color = data.color
 
-    if data.brand != None:
-        product.brand = data.brand
+    if data.brandId != None:
+        product.brandId = data.brandId
 
     if data.sold != None:
         product.sold = data.sold

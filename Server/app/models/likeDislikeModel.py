@@ -11,6 +11,7 @@ class Like(Base):
     id = Column(Integer , primary_key=True)
     userId = Column(Integer , ForeignKey("users.id"))
     blogId = Column(Integer , ForeignKey("blogs.id"))
+    createdAt = Column(DateTime , default=datetime.utcnow)
 
     user = relationship("User" , back_populates="likes")
     blog = relationship("Blog" , back_populates="likes")
@@ -24,6 +25,7 @@ class Dislike(Base):
     id = Column(Integer , primary_key=True)
     userId = Column(Integer , ForeignKey("users.id"))
     blogId = Column(Integer , ForeignKey("blogs.id"))
+    createdAt = Column(DateTime , default=datetime.utcnow)
 
     user = relationship("User" , back_populates="dislikes")
     blog = relationship("Blog" , back_populates="dislikes")
