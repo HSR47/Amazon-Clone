@@ -29,6 +29,7 @@ import app.models.likeDislikeModel
 import app.models.categoryModel
 import app.models.brandModel
 import app.models.wishlistModel
+import app.models.couponModel
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

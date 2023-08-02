@@ -22,7 +22,7 @@ def rate_a_product(id:int , data:ratingSchema.ratingRequest , curCustomer:User =
     
     rating:Rating = db.query(Rating).filter((Rating.userId==curCustomer.id) & (Rating.productId==id)).first()
     if rating != None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product already rated")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="product already rated")
 
     rating = Rating(
         userId = curCustomer.id,
