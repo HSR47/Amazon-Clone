@@ -5,6 +5,7 @@ from datetime import datetime
 from app.models import Base
 from app.models.ratingModel import Rating
 from app.models.wishlistModel import Wishlist
+from app.models.ratingModel import Rating
 
 
 class Product(Base):
@@ -22,7 +23,6 @@ class Product(Base):
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
-    ratings = relationship("Rating" , back_populates="product")
 
     brandId = Column(Integer , ForeignKey("brands.id"))
     brand = relationship("Brand" , back_populates="products")
@@ -41,3 +41,13 @@ class Product(Base):
         return self.category.name
     
     wishlists = relationship("Wishlist" , back_populates="product" , cascade="all, delete")
+
+    ratings = relationship("Rating" , back_populates="product" , cascade="all, delete")
+    @property
+    def avgRating(self):
+        allStars = [rating.star for rating in self.ratings]
+        if allStars == []:
+            return 0
+        result:float = sum(allStars)/len(allStars)
+        result = result.__round__(1)
+        return result

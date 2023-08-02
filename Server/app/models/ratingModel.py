@@ -1,20 +1,18 @@
 
-
-from sqlalchemy import Column, ForeignKey , Integer, PrimaryKeyConstraint , String , Boolean , DateTime
+from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime, Uuid
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
 
-
 class Rating(Base):
     __tablename__ = "ratings"
 
+    id = Column(Integer , primary_key=True)
     userId = Column(Integer , ForeignKey("users.id"))
     productId = Column(Integer , ForeignKey("products.id"))
-    stars = Column(Integer , nullable=False)
+    star = Column(Integer , nullable=False)
+    comment = Column(String)
+    created = Column(DateTime , default=datetime.utcnow)
 
     product = relationship("Product" , back_populates="ratings")
-
-    __table_args__ = (
-        PrimaryKeyConstraint("userId" , "productId"),
-    )
+    user = relationship("User" , back_populates="ratings")

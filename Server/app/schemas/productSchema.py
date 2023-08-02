@@ -4,6 +4,8 @@ from click import Option
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
+from app.schemas.ratingSchema import returnRating
+
 
 class addProduct(BaseModel):
     title : str
@@ -42,6 +44,8 @@ class returnProduct(BaseModel):
     categoryName : str | None
     createdAt : datetime
     updatedAt : datetime
+    ratings : list[returnRating]
+    avgRating : float
 
     class config:
         from_attributes = True
