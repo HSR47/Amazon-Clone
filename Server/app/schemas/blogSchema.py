@@ -24,6 +24,13 @@ class createBlogRequest(BaseModel):
         return value.lower()
 
 
+class returnImageInBlog(BaseModel):
+    id : int
+    name : str
+    url : str
+
+    class Config():
+        from_attributes = True
 
 class returnBlog(BaseModel):
     id : int
@@ -31,13 +38,13 @@ class returnBlog(BaseModel):
     title : str
     description : str
     categoryName : str | None
-    image : str
     views : int
     author : returnUser
     createdAt : datetime
     updatedAt : datetime
     likedBy : list[int]
     dislikedBy : list[int]
+    images : list[returnImageInBlog]
 
     class Config():
         from_attributes = True

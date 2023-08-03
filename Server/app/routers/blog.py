@@ -1,15 +1,17 @@
 
-from fastapi import APIRouter , Depends , HTTPException , status
+from fastapi import APIRouter , Depends, File , HTTPException, UploadFile , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.blogModel import Blog
 from app.models.categoryModel import BlogCategory
+from app.models.imageModel import BlogImage
 from app.models.likeDislikeModel import Dislike, Like
 
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_user
 import app.schemas.blogSchema as blogSchema
+from app.utils.cloudinary import deleteImage, uploadImage
 
 blogRouter = APIRouter(tags=["Blog"])
 
@@ -176,4 +178,56 @@ def dislikeABlog(id:int , curUser:User = Depends(get_current_user) , db:Session 
         db.commit()
 
         return {"message" : "disliked"}
+# ------------------------------------------------------------------
+
+
+# ----------------------------ADD IMAGE-------------------------
+@blogRouter.post("/blog-image/{id}")
+def add_image(id:int , images:list[UploadFile] = File(...) , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+
+    blog:Blog = db.query(Blog).filter(Blog.id == id).first()
+    if blog == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="blog not found")
+
+    if blog.userId != curUser.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="not allowed")
+
+    try:
+        for img in images:
+            url , publicId = uploadImage(img.file)
+            
+            image = BlogImage(
+                blogId = id,
+                name = img.filename,
+                url = url,
+                publicId = publicId
+            )
+
+            db.add(image)
+        
+        db.commit()
+
+        return {"message" : "added"}
+    except:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="unexpected error occured")
+# ------------------------------------------------------------------
+
+
+# ----------------------------REMOVE IMAGE-------------------------
+@blogRouter.delete("/blog-image/{id}")
+def remove_image(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+
+    image:BlogImage = db.query(BlogImage).filter(BlogImage.id == id).first()
+    if image == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="image not found")
+    
+    if image.blog.userId != curUser.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="not allowed")
+
+    deleteImage(image.publicId)
+
+    db.delete(image)
+    db.commit()
+
+    return {"message" : "removed"}
 # ------------------------------------------------------------------
