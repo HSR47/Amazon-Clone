@@ -21,7 +21,7 @@ prodRouter = APIRouter(tags=["Product"])
 
 # ----------------------------ADD PRODUCT-------------------------
 @prodRouter.post("/product" , response_model=productSchema.returnProduct)
-def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     slug = slugify(data.title)
 
@@ -61,7 +61,7 @@ def addProduct(data:productSchema.addProduct , curAdmin:User = Depends(get_curre
 
 # ----------------------------GET ALL PRODUCTS-------------------------
 @prodRouter.get("/product" , response_model=list[productSchema.returnProduct])
-def getAllProducts(color:str=Query(None) , brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(10) , db:Session = Depends(getDb)):
+def get_All_Products(color:str=Query(None) , brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(10) , db:Session = Depends(getDb)):
     
     if sortBy!=None:
         if sortBy not in ["id" , "title" , "price" , "quantity" , "sold" , "brand"]:
@@ -95,7 +95,7 @@ def getAllProducts(color:str=Query(None) , brand:str=Query(None) , category:str=
 
 # ----------------------------GET SPECIFIC PRODUCTS-------------------------
 @prodRouter.get("/product/{id}" , response_model=productSchema.returnProduct)
-def getSpecificProduct(id:int , db:Session = Depends(getDb)):
+def get_Specific_Product(id:int , db:Session = Depends(getDb)):
     specificProduct = db.query(Product).filter(Product.id == id).first()
     if specificProduct == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
@@ -106,7 +106,7 @@ def getSpecificProduct(id:int , db:Session = Depends(getDb)):
 
 # ----------------------------UPDATE PRODUCT-------------------------
 @prodRouter.patch("/product/{id}" , response_model=productSchema.returnProduct)
-def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def update_Product(id:int , data:productSchema.updateProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     product:Product = db.query(Product).filter(Product.id == id).first()
     if product == None:
@@ -166,7 +166,7 @@ def updateProduct(id:int , data:productSchema.updateProduct , curAdmin:User = De
 
 # ----------------------------DELETE PRODUCT-------------------------
 @prodRouter.delete("/product/{id}")
-def deleteProduct(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def delete_Product(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     product = db.query(Product).filter(Product.id == id).first()
     if product == None:

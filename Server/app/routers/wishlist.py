@@ -17,7 +17,7 @@ wishRouter = APIRouter(tags=["Wishlist"])
 
 # ----------------------------ADD TO WISHLIST-------------------------
 @wishRouter.put("/wishlist/{id}")
-def addToWishlist(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+def add_To_Wishlist(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
     product = db.query(Product).filter(Product.id == id).first()
     if product == None:
@@ -41,7 +41,7 @@ def addToWishlist(id:int , curCust:User = Depends(get_current_customer) , db:Ses
 
 # ----------------------------REMOVE FROM WISHLIST-------------------------
 @wishRouter.delete("/wishlist/{id}")
-def removeFromWishlist(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+def remove_From_Wishlist(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
     product = db.query(Product).filter(Product.id == id).first()
     if product == None:

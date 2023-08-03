@@ -15,7 +15,7 @@ prodCatRouter = APIRouter(tags=["Product Category"])
 
 # ----------------------------ADD PRODUCT CATEGORY-------------------------
 @prodCatRouter.post("/category/product" , response_model=categorySchema.returnCategory)
-def addProductCategory(data:categorySchema.addCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def add_Product_Category(data:categorySchema.addCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     check = db.query(ProdCategory).filter(ProdCategory.name == data.name).first()
     if check != None:
@@ -34,7 +34,7 @@ def addProductCategory(data:categorySchema.addCategoryRequest , curAdmin:User = 
 
 # ----------------------------GET ALL PRODUCT CATEGORY-------------------------
 @prodCatRouter.get("/category/product" , response_model=list[categorySchema.returnCategory])
-def getAllProductCategory(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def get_All_Product_Category(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     allCategory = db.query(ProdCategory).all()
     return allCategory
 # ------------------------------------------------------------------
@@ -42,7 +42,7 @@ def getAllProductCategory(curAdmin:User = Depends(get_current_admin) , db:Sessio
 
 # ----------------------------GET SPECIFIC PRODUCT CATEGORY-------------------------
 @prodCatRouter.get("/category/product/{id}" , response_model=categorySchema.returnCategory)
-def getSpecificProductCategory(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def get_Specific_Product_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     category = db.query(ProdCategory).filter(ProdCategory.id == id).first()
     if category == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
@@ -53,7 +53,7 @@ def getSpecificProductCategory(id:int , curAdmin:User = Depends(get_current_admi
 
 # ----------------------------UPDATE PRODUCT CATEGORY-------------------------
 @prodCatRouter.patch("/category/product/{id}" , response_model=categorySchema.returnCategory)
-def updateProductCategory(id:int , data:categorySchema.updateCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def update_Product_Category(id:int , data:categorySchema.updateCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     category:ProdCategory = db.query(ProdCategory).filter(ProdCategory.id == id).first()
     if category == None:
@@ -70,7 +70,7 @@ def updateProductCategory(id:int , data:categorySchema.updateCategoryRequest , c
 
 # ----------------------------DELETE PRODUCT CATEGORY-------------------------
 @prodCatRouter.delete("/category/product/{id}")
-def deleteProductCategory(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def delete_Product_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     category:ProdCategory = db.query(ProdCategory).filter(ProdCategory.id == id).first()
     if category == None:

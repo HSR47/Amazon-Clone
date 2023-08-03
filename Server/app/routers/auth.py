@@ -84,7 +84,7 @@ def login(data:authSchema.loginUser , db:Session = Depends(getDb)):
 
 # ----------------------------REFRESH ACCESS TOKEN-------------------------
 @authRouter.post("/token/refresh")
-def refreshAccessToken(req:Request , db:Session = Depends(getDb)):
+def refresh_access_token(req:Request , db:Session = Depends(getDb)):
     refreshToken = req.cookies.get("refreshToken" , None)
     if refreshToken == None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
@@ -107,7 +107,7 @@ def refreshAccessToken(req:Request , db:Session = Depends(getDb)):
 
 # ----------------------------LOG OUT-------------------------
 @authRouter.get("/logout")
-def logoutUser(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def logout_User(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     curUser.refreshToken = None
     db.commit()
@@ -123,7 +123,7 @@ def logoutUser(curUser:User = Depends(get_current_user) , db:Session = Depends(g
 
 # ----------------------------CHANGE PASSWORD-------------------------
 @authRouter.put("/password")
-def changePassword(data:authSchema.changePassword , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def change_Password(data:authSchema.changePassword , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
     curUser.password = hashPassword(data.password)
     db.commit()
     db.refresh(curUser)
@@ -134,7 +134,7 @@ def changePassword(data:authSchema.changePassword , curUser:User = Depends(get_c
 
 # ----------------------------GENERATE PASSWORD RESET TOKEN-------------------------
 @authRouter.post("/forgot-password")
-def generatePassResetToken(bgtask:BackgroundTasks , data:authSchema.forgotPassRequest , db:Session = Depends(getDb)):
+def generate_Pass_Reset_Token(bgtask:BackgroundTasks , data:authSchema.forgotPassRequest , db:Session = Depends(getDb)):
     user:User = db.query(User).filter(User.email == data.email).first()
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="user not found")
@@ -161,7 +161,7 @@ async def sendPassResetToken(email , passResetToken):
 
 # ----------------------------RESET PASSWORD-------------------------
 @authRouter.post("/reset-password/{secret}")
-def resetPassword(secret:str , data:authSchema.resetPassRequest , db:Session = Depends(getDb)):
+def reset_Password(secret:str , data:authSchema.resetPassRequest , db:Session = Depends(getDb)):
 
     user:User = db.query(User).filter(User.email == data.email).first()
     if user == None:

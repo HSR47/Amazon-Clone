@@ -15,7 +15,7 @@ blogCatRouter = APIRouter(tags=["Blog Category"])
 
 # ----------------------------ADD BLOG CATEGORY-------------------------
 @blogCatRouter.post("/category/blog" , response_model=categorySchema.returnCategory)
-def addBlogCategory(data:categorySchema.addCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def add_Blog_Category(data:categorySchema.addCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     check = db.query(BlogCategory).filter(BlogCategory.name == data.name).first()
     if check != None:
@@ -34,7 +34,7 @@ def addBlogCategory(data:categorySchema.addCategoryRequest , curAdmin:User = Dep
 
 # ----------------------------GET ALL BLOG CATEGORY-------------------------
 @blogCatRouter.get("/category/blog" , response_model=list[categorySchema.returnCategory])
-def getAllBlogCategory(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def get_All_Blog_Category(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     allCategory = db.query(BlogCategory).all()
     return allCategory
 # ------------------------------------------------------------------
@@ -42,7 +42,7 @@ def getAllBlogCategory(curAdmin:User = Depends(get_current_admin) , db:Session =
 
 # ----------------------------GET SPECIFIC BLOG CATEGORY-------------------------
 @blogCatRouter.get("/category/blog/{id}" , response_model=categorySchema.returnCategory)
-def getSpecificBlogCategory(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def get_Specific_Blog_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     category = db.query(BlogCategory).filter(BlogCategory.id == id).first()
     if category == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
@@ -53,7 +53,7 @@ def getSpecificBlogCategory(id:int , curAdmin:User = Depends(get_current_admin) 
 
 # ----------------------------UPDATE BLOG CATEGORY-------------------------
 @blogCatRouter.patch("/category/blog/{id}" , response_model=categorySchema.returnCategory)
-def updateBlogCategory(id:int , data:categorySchema.updateCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def update_Blog_Category(id:int , data:categorySchema.updateCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     category:BlogCategory = db.query(BlogCategory).filter(BlogCategory.id == id).first()
     if category == None:
@@ -70,7 +70,7 @@ def updateBlogCategory(id:int , data:categorySchema.updateCategoryRequest , curA
 
 # ----------------------------DELETE BLOG CATEGORY-------------------------
 @blogCatRouter.delete("/category/blog/{id}")
-def deleteBlogCategory(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def delete_Blog_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     category:BlogCategory = db.query(BlogCategory).filter(BlogCategory.id == id).first()
     if category == None:

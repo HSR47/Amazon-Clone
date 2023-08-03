@@ -18,7 +18,7 @@ blogRouter = APIRouter(tags=["Blog"])
 
 # ----------------------------CREATE BLOG-------------------------
 @blogRouter.post("/blog" , response_model=blogSchema.returnBlog)
-def createBlog(data:blogSchema.createBlogRequest , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def create_Blog(data:blogSchema.createBlogRequest , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     if data.categoryId != None:
         checkCategory = db.query(BlogCategory).filter(BlogCategory.id == data.categoryId).first()
@@ -42,7 +42,7 @@ def createBlog(data:blogSchema.createBlogRequest , curUser:User = Depends(get_cu
 
 # ----------------------------GET ALL BLOGS-------------------------
 @blogRouter.get("/blog" , response_model=list[blogSchema.returnBlog])
-def getAllBlogs(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def get_All_Blogs(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
     allBlogs = db.query(Blog).all()
     return allBlogs
 # ------------------------------------------------------------------
@@ -50,7 +50,7 @@ def getAllBlogs(curUser:User = Depends(get_current_user) , db:Session = Depends(
 
 # ----------------------------GET SPECIFIC BLOG-------------------------
 @blogRouter.get("/blog/{id}" , response_model=blogSchema.returnBlog)
-def getSpecificBlog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def get_Specific_Blog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     blog:Blog = db.query(Blog).filter(Blog.id == id).first()
     if blog == None:
@@ -65,7 +65,7 @@ def getSpecificBlog(id:int , curUser:User = Depends(get_current_user) , db:Sessi
 
 # ----------------------------UPDATE BLOG-------------------------
 @blogRouter.patch("/blog/{id}" , response_model=blogSchema.returnBlog)
-def updateBlog(id:int , data:blogSchema.updateBlogRequest , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def update_Blog(id:int , data:blogSchema.updateBlogRequest , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     blog:Blog = db.query(Blog).filter(Blog.id == id).first()
     if blog == None:
@@ -95,7 +95,7 @@ def updateBlog(id:int , data:blogSchema.updateBlogRequest , curUser:User = Depen
 
 # ----------------------------DELETE BLOG-------------------------
 @blogRouter.delete("/blog/{id}")
-def deleteBlog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def delete_Blog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     blog:Blog = db.query(Blog).filter(Blog.id == id).first()
     if blog == None:
@@ -113,7 +113,7 @@ def deleteBlog(id:int , curUser:User = Depends(get_current_user) , db:Session = 
 
 # ----------------------------LIKE A BLOG-------------------------
 @blogRouter.put("/blog/like/{id}")
-def likeABlog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def like_A_Blog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     blog:Blog = db.query(Blog).filter(Blog.id == id).first()
     if blog == None:
@@ -148,7 +148,7 @@ def likeABlog(id:int , curUser:User = Depends(get_current_user) , db:Session = D
 
 # ----------------------------DISLIKE A BLOG-------------------------
 @blogRouter.put("/blog/dislike/{id}")
-def dislikeABlog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def dislike_A_Blog(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     blog:Blog = db.query(Blog).filter(Blog.id == id).first()
     if blog == None:

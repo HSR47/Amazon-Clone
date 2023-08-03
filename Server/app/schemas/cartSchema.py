@@ -20,5 +20,6 @@ class returnCart(BaseModel):
     class Config():
         form_attributes = True
 
+
 class updateCartRequest(BaseModel):
     count : Optional[int] = Field(default=None , ge=1)

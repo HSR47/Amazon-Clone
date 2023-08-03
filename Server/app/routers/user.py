@@ -14,7 +14,7 @@ userRouter = APIRouter(tags=["User"])
 
 # ----------------------------CREATE USER-------------------------
 @userRouter.post("/user" , response_model=userSchema.returnUser)
-def registerUser(data:userSchema.registerUser , db:Session = Depends(getDb)):
+def register_User(data:userSchema.registerUser , db:Session = Depends(getDb)):
 
     check = db.query(User).filter((User.email==data.email) | (User.mobile==data.mobile)).first()
     if check != None:
@@ -43,7 +43,7 @@ def registerUser(data:userSchema.registerUser , db:Session = Depends(getDb)):
 
 # ----------------------------GET ALL USERS-------------------------
 @userRouter.get("/user" , response_model=list[userSchema.returnUser])
-def getAllUsers(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def get_All_Users(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
     allUsers = db.query(User).all()
     return allUsers
 # ------------------------------------------------------------------
@@ -52,7 +52,7 @@ def getAllUsers(curUser:User = Depends(get_current_user) , db:Session = Depends(
 
 # ----------------------------GET SPECIFIC USER-------------------------
 @userRouter.get("/user/{id}" , response_model=userSchema.returnUser)
-def getSpecificUser(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def get_Specific_User(id:int , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     user:User = db.query(User).filter(User.id == id).first()
 
@@ -66,7 +66,7 @@ def getSpecificUser(id:int , curUser:User = Depends(get_current_user) , db:Sessi
 
 # ----------------------------DELETE USER-------------------------
 @userRouter.delete("/user/{id}")
-def deleteUser(id:int , db:Session = Depends(getDb)):
+def delete_User(id:int , db:Session = Depends(getDb)):
 
     user = db.query(User).filter(User.id == id).first()
 
@@ -83,7 +83,7 @@ def deleteUser(id:int , db:Session = Depends(getDb)):
 
 # ----------------------------UPDATE USER-------------------------
 @userRouter.patch("/user" , response_model=userSchema.returnUser)
-def updateUser(data:userSchema.updateUser , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
+def update_User(data:userSchema.updateUser , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
     user:User = curUser
 
@@ -107,7 +107,7 @@ def updateUser(data:userSchema.updateUser , curUser:User = Depends(get_current_u
 
 # ----------------------------BLOCK USER-------------------------
 @userRouter.put("/user/block/{id}")
-def blockUser(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def block_User(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     
     userToBlock:User = db.query(User).filter(User.id == id).first()
 
@@ -131,7 +131,7 @@ def blockUser(id:int , curAdmin:User = Depends(get_current_admin) , db:Session =
 
 # ----------------------------UNBLOCK USER-------------------------
 @userRouter.put("/user/unblock/{id}")
-def unblockUser(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def unblock_User(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
     
     userToBlock:User = db.query(User).filter(User.id == id).first()
 
