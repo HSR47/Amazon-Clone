@@ -14,7 +14,10 @@ class Settings(BaseSettings):
     MAIL_PASSWORD : str
     MAIL_FROM_NAME : str
     PASS_RESET_TOKEN_EXP_MINUTES : int
-    
+    CLOUDINARY_NAME : str
+    CLOUDINARY_KEY : str
+    CLOUDINARY_SECRET : str
+
     class Config:
         env_file = ".env"
 

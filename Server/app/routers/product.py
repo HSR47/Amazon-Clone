@@ -1,10 +1,11 @@
 
-from fastapi import APIRouter , Depends , HTTPException, Query , status
+from fastapi import APIRouter , Depends, File , HTTPException, Query, UploadFile , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.brandModel import Brand
 from app.models.categoryModel import ProdCategory
+from app.models.imageModel import ProductImage
 from app.models.productModel import Product
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_user
@@ -12,6 +13,8 @@ from app.routers.auth import get_current_admin, get_current_user
 import app.schemas.productSchema as productSchema
 
 from slugify import slugify
+
+from app.utils.cloudinary import deleteImage, uploadImage
 
 prodRouter = APIRouter(tags=["Product"])
 
@@ -173,4 +176,50 @@ def deleteProduct(id:int , curAdmin:User = Depends(get_current_admin) , db:Sessi
     db.commit()
 
     return {"message" : "deleted"}
+# ------------------------------------------------------------------
+
+
+# ----------------------------ADD IMAGE-------------------------
+@prodRouter.post("/product-image/{id}")
+def add_image(id:int , images:list[UploadFile] = File(...) , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+
+    product:Product = db.query(Product).filter(Product.id == id).first()
+    if product == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
+
+    try:
+        for img in images:
+            url , publicId = uploadImage(img.file)
+            
+            image = ProductImage(
+                productId = id,
+                name = img.filename,
+                url = url,
+                publicId = publicId
+            )
+
+            db.add(image)
+        
+        db.commit()
+
+        return {"message" : "added"}
+    except:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="unexpected error occured")
+# ------------------------------------------------------------------
+
+
+# ----------------------------REMOVE IMAGE-------------------------
+@prodRouter.delete("/product-image/{id}")
+def remove_image(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+
+    image:ProductImage = db.query(ProductImage).filter(ProductImage.id == id).first()
+    if image == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="image not found")
+    
+    deleteImage(image.publicId)
+
+    db.delete(image)
+    db.commit()
+
+    return {"message" : "removed"}
 # ------------------------------------------------------------------

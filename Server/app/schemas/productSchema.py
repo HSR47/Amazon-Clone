@@ -29,6 +29,14 @@ class addProduct(BaseModel):
         return value.lower()
 
 
+class returnImageInProduct(BaseModel):
+    id : int
+    name : str
+    url : str
+
+    class config:
+        from_attributes = True
+
 class returnProduct(BaseModel):
     id : int
     title : str
@@ -45,6 +53,7 @@ class returnProduct(BaseModel):
     updatedAt : datetime
     ratings : list[returnRating]
     avgRating : float
+    images : list[returnImageInProduct]
 
     class config:
         from_attributes = True

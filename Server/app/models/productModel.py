@@ -1,4 +1,5 @@
 
+from turtle import back
 from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -6,7 +7,7 @@ from app.models import Base
 from app.models.ratingModel import Rating
 from app.models.wishlistModel import Wishlist
 from app.models.ratingModel import Rating
-
+from app.models.imageModel import ProductImage
 
 class Product(Base):
     __tablename__ = "products"
@@ -19,7 +20,6 @@ class Product(Base):
     quantity = Column(Integer , nullable=False)
     sold = Column(Integer , default=0)
     color = Column(String)
-    # images
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
@@ -51,3 +51,6 @@ class Product(Base):
         result:float = sum(allStars)/len(allStars)
         result = result.__round__(1)
         return result
+    
+
+    images = relationship("ProductImage" , back_populates="product" , cascade="all, delete")
