@@ -7,6 +7,7 @@ from app.models.blogModel import Blog
 from app.models.likeDislikeModel import Like , Dislike
 from app.models.wishlistModel import Wishlist
 from app.models.ratingModel import Rating
+from app.models.cartModel import CartItem
 
 class User(Base):
     __tablename__ = "users"
@@ -34,3 +35,6 @@ class User(Base):
     @property
     def wishlistProducts(self):
         return [wishlist.productId for wishlist in self.wishlists]
+    
+
+    cartItems = relationship("CartItem" , back_populates="user" , cascade="all, delete")
