@@ -7,7 +7,7 @@ from app.models.brandModel import Brand
 from app.models.couponModel import Coupon
 
 from app.models.userModel import User
-from app.routers.auth import get_current_admin, get_current_user
+from app.routers.auth import get_current_admin, get_current_customer, get_current_user
 import app.schemas.couponSchema as couponSchema
 
 couponRouter = APIRouter(tags=["Coupon"])

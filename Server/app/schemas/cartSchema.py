@@ -16,6 +16,8 @@ class returnCart(BaseModel):
     product : returnProduct
     count : int
     price : int
+    disPrice : float
+    couponId : int | None
 
     class Config():
         form_attributes = True

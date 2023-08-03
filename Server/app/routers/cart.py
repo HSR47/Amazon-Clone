@@ -6,6 +6,7 @@ from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.brandModel import Brand
 from app.models.cartModel import CartItem
+from app.models.couponModel import Coupon
 from app.models.productModel import Product
 
 from app.models.userModel import User
@@ -99,3 +100,31 @@ def clear_cart(curCust:User = Depends(get_current_customer) , db:Session = Depen
 
 
 
+# ----------------------------APPLY COUPON-------------------------
+@cartRouter.get("/apply-coupon/{couponCode}")
+def apply_coupon(couponCode:str , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+
+    coupon:Coupon = db.query(Coupon).filter(Coupon.name == couponCode).first()
+    if coupon == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="coupon not found")
+
+    allCartItems:list[CartItem] = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
+    for i in allCartItems:
+        i.couponId = coupon.id
+    db.commit()
+    
+    return {"message" : "applied"}
+# ------------------------------------------------------------------
+
+
+# ----------------------------REMOVE COUPON-------------------------
+@cartRouter.delete("/remove-coupon")
+def remove_coupon(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+
+    allCartItems:list[CartItem] = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
+    for i in allCartItems:
+        i.couponId = None
+    db.commit()
+
+    return {"message" : "removed"}
+# ------------------------------------------------------------------

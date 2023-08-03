@@ -11,6 +11,7 @@ class CartItem(Base):
     id = Column(Integer , primary_key=True)
     userId = Column(Integer , ForeignKey("users.id"))
     productId = Column(Integer , ForeignKey("products.id"))
+    couponId = Column(Integer , ForeignKey("coupons.id") , nullable=True , default=None)
     count = Column(Integer , nullable=False)
     price = Column(Integer , nullable=False)
     createdAt = Column(DateTime , default=datetime.utcnow)
@@ -18,3 +19,12 @@ class CartItem(Base):
 
     user = relationship("User" , back_populates="cartItems")
     product = relationship("Product" , back_populates="cartItems")
+    coupon = relationship("Coupon" , back_populates="cartItems")
+
+    @property
+    def disPrice(self):
+        if self.couponId == None:
+            return self.price
+        
+        result:float = (self.price * (100 - self.coupon.discount))/100
+        return result.__round__(2)

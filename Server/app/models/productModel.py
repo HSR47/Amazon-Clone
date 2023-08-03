@@ -1,6 +1,6 @@
 
 from turtle import back
-from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime
+from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime , event
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
@@ -57,3 +57,12 @@ class Product(Base):
     images = relationship("ProductImage" , back_populates="product" , cascade="all, delete")
 
     cartItems = relationship("CartItem" , back_populates="product" , cascade="all, delete")
+
+
+
+def updateCartItemPrice(target:Product , value:int , oldValue:int , initiator):
+    for cartItem in target.cartItems:
+        cartItem.price = value
+
+
+event.listen(Product.price , "set" , updateCartItemPrice)
