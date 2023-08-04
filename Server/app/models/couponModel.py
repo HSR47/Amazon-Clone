@@ -15,12 +15,12 @@ class Coupon(Base):
     createdAt = Column(DateTime , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
-    cartItems = relationship("CartItem" , back_populates="coupon")
+    users = relationship("User" , back_populates="coupon")
 
 
 
 def handle_coupon_delete(mapper, connection, target:Coupon):
-    for cart_item in target.cartItems:
-        cart_item.couponId = None
+    for user in target.users:
+        user.couponId = None
 
 event.listen(Coupon, "before_delete", handle_coupon_delete)

@@ -14,7 +14,7 @@ from app.models.productModel import Product
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_customer, get_current_user
 import app.schemas.brandSchema as brandSchema
-from app.schemas.cartSchema import addToCartRequest, returnCart, updateCartRequest
+from app.schemas.cartSchema import addToCartRequest, updateCartRequest
 from app.schemas.orderSchema import placeOrderRequest, returnOrder, updateOrderRequest
 
 orderRouter = APIRouter(tags=["Order"])

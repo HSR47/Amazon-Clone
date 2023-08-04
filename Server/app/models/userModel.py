@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column , Integer , String , Boolean , DateTime
+from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
@@ -31,6 +31,9 @@ class User(Base):
     likes = relationship("Like" , back_populates="user" , cascade="all, delete")
     dislikes = relationship("Dislike" , back_populates="user" , cascade="all, delete")
     ratings = relationship("Rating" , back_populates="user" , cascade="all, delete")
+    
+    couponId = Column(Integer , ForeignKey("coupons.id") , nullable=True , default=None)
+    coupon = relationship("Coupon" , back_populates="users")
 
     wishlists = relationship("Wishlist" , back_populates="user" , cascade="all, delete")
     @property

@@ -12,7 +12,7 @@ from app.models.productModel import Product
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_customer, get_current_user
 import app.schemas.brandSchema as brandSchema
-from app.schemas.cartSchema import addToCartRequest, returnCart, updateCartRequest
+from app.schemas.cartSchema import addToCartRequest, returnCartItem, updateCartRequest
 
 cartRouter = APIRouter(tags=["Cart"])
 
@@ -60,7 +60,7 @@ def remove_from_cart(id:int , curCust:User = Depends(get_current_customer) , db:
 
 
 # ----------------------------GET CART-------------------------
-@cartRouter.get("/cart" , response_model=list[returnCart])
+@cartRouter.get("/cart" , response_model=list[returnCartItem])
 def get_cart(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
     allItems = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
@@ -108,9 +108,7 @@ def apply_coupon(couponCode:str , curCust:User = Depends(get_current_customer) ,
     if coupon == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="coupon not found")
 
-    allCartItems:list[CartItem] = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
-    for i in allCartItems:
-        i.couponId = coupon.id
+    curCust.couponId = coupon.id
     db.commit()
     
     return {"message" : "applied"}
@@ -121,9 +119,7 @@ def apply_coupon(couponCode:str , curCust:User = Depends(get_current_customer) ,
 @cartRouter.delete("/remove-coupon")
 def remove_coupon(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
-    allCartItems:list[CartItem] = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
-    for i in allCartItems:
-        i.couponId = None
+    curCust.couponId = None
     db.commit()
 
     return {"message" : "removed"}
