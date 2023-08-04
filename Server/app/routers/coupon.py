@@ -44,7 +44,7 @@ def get_all_coupons(curAdmin:User = Depends(get_current_admin) , db:Session = De
 
 # ----------------------------GET SPECIFIC COUPON-------------------------
 @couponRouter.get("/coupon/{id}" , response_model=couponSchema.returnCoupon)
-def create_coupon(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+def get_specific_coupon(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     coupon = db.query(Coupon).filter(Coupon.id == id).first()
     if coupon == None:

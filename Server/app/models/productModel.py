@@ -9,6 +9,7 @@ from app.models.wishlistModel import Wishlist
 from app.models.ratingModel import Rating
 from app.models.imageModel import ProductImage
 from app.models.cartModel import CartItem
+from app.models.orderModel import OrderItem
 
 class Product(Base):
     __tablename__ = "products"
@@ -57,6 +58,7 @@ class Product(Base):
     images = relationship("ProductImage" , back_populates="product" , cascade="all, delete")
 
     cartItems = relationship("CartItem" , back_populates="product" , cascade="all, delete")
+    orderItems = relationship("OrderItem" , back_populates="product" , cascade="all, delete")
 
 
 

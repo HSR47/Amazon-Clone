@@ -8,6 +8,7 @@ from app.models.likeDislikeModel import Like , Dislike
 from app.models.wishlistModel import Wishlist
 from app.models.ratingModel import Rating
 from app.models.cartModel import CartItem
+from app.models.orderModel import Order
 
 class User(Base):
     __tablename__ = "users"
@@ -38,3 +39,5 @@ class User(Base):
     
 
     cartItems = relationship("CartItem" , back_populates="user" , cascade="all, delete")
+
+    orders = relationship("Order" , back_populates="user" , cascade="all, delete")
