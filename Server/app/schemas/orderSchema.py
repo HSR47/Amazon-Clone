@@ -6,6 +6,27 @@ from datetime import datetime
 
 from app.schemas.productSchema import returnProduct
 
+class placeOrderRequest(BaseModel):
+    method : str = Field(pattern=r"^(cod)$")
+
+
+
+class updateOrderRequest(BaseModel):
+    status : str = Field(pattern=r"^(pending|processing|shipped|delivered|cancelled)$")
+
+
+
+
+
+
+class returnPaymentInOrder(BaseModel):
+    id : int
+    method : Enum
+    amount : int
+
+    class config:
+        form_attributes = True
+
 
 class returnOrderItemsInOrder(BaseModel):
     product : returnProduct
@@ -15,11 +36,12 @@ class returnOrderItemsInOrder(BaseModel):
     class config:
         form_attributes = True
 
+
 class returnOrder(BaseModel):
     id : int
     userId : int
     status : Enum
-    total : int
+    payment : returnPaymentInOrder
     createdAt : datetime
     updatedAt : datetime
     orderItems : list[returnOrderItemsInOrder]
@@ -27,5 +49,9 @@ class returnOrder(BaseModel):
     class config:
         form_attributes = True
 
-class updateOrderRequest(BaseModel):
-    status : str = Field(pattern=r"^(pending|processing|shipped|delivered|cancelled)$")
+
+
+
+
+
+

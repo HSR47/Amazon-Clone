@@ -8,20 +8,21 @@ from app.models.brandModel import Brand
 from app.models.cartModel import CartItem
 from app.models.couponModel import Coupon
 from app.models.orderModel import Order, OrderItem
+from app.models.paymentModel import Payment
 from app.models.productModel import Product
 
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_customer, get_current_user
 import app.schemas.brandSchema as brandSchema
 from app.schemas.cartSchema import addToCartRequest, returnCart, updateCartRequest
-from app.schemas.orderSchema import returnOrder, updateOrderRequest
+from app.schemas.orderSchema import placeOrderRequest, returnOrder, updateOrderRequest
 
 orderRouter = APIRouter(tags=["Order"])
 
 
 # ----------------------------PLACE ORDER-------------------------
 @orderRouter.get("/place-order")
-def place_order(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+def place_order(data:placeOrderRequest , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
     if curCust.cartItems == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="cart is empty")
@@ -44,8 +45,13 @@ def place_order(curCust:User = Depends(get_current_customer) , db:Session = Depe
 
         db.add(orderItem)
     
+    payment = Payment(
+        orderId = order.id,
+        method = data.method
+    )
+
+    db.add(payment)
     db.commit()
-    db.refresh(order)
 
     return {"message" : "order placed"}
 # ------------------------------------------------------------------
