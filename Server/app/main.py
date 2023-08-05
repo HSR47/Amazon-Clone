@@ -12,6 +12,7 @@ from app.routers.rating import rateRouter
 from app.routers.coupon import couponRouter
 from app.routers.cart import cartRouter
 from app.routers.order import orderRouter
+from app.routers.color import colorRouter
 
 import app.database
 
@@ -28,6 +29,7 @@ app.include_router(rateRouter)
 app.include_router(couponRouter)
 app.include_router(cartRouter)
 app.include_router(orderRouter)
+app.include_router(colorRouter)
 
 @app.get("/")
 def home():
