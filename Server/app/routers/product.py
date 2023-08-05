@@ -5,6 +5,7 @@ from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.brandModel import Brand
 from app.models.categoryModel import ProdCategory
+from app.models.colorModel import Color, ProductColor
 from app.models.imageModel import ProductImage
 from app.models.productModel import Product
 from app.models.userModel import User
@@ -39,6 +40,14 @@ def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_curr
         if checkBrand == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
 
+    colors:list[Color] = []
+    if data.colors != None:
+        for i in data.colors:
+            color = db.query(Color).filter(Color.id == i).first()
+            if color == None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f"color with id-{i} not found")
+            colors.append(color)
+
     newProduct:Product = Product(
         title = data.title,
         slug = slug,
@@ -46,12 +55,21 @@ def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_curr
         price = data.price,
         quantity = data.quantity,
         sold = data.sold,
-        color = data.color,
         brandId = data.brandId,
         categoryId = data.categoryId
     )
 
     db.add(newProduct)
+    db.commit()
+    db.refresh(newProduct)
+
+    for i in colors:
+        productColor = ProductColor(
+            productId = newProduct.id,
+            colorId = i.id,
+        )
+        db.add(productColor)
+
     db.commit()
     db.refresh(newProduct)
 
@@ -105,7 +123,7 @@ def get_Specific_Product(id:int , db:Session = Depends(getDb)):
 
 
 # ----------------------------UPDATE PRODUCT-------------------------
-@prodRouter.patch("/product/{id}" , response_model=productSchema.returnProduct)
+@prodRouter.patch("/product/{id}")
 def update_Product(id:int , data:productSchema.updateProduct , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     product:Product = db.query(Product).filter(Product.id == id).first()
@@ -145,9 +163,6 @@ def update_Product(id:int , data:productSchema.updateProduct , curAdmin:User = D
     if data.quantity != None:
         product.quantity = data.quantity
 
-    if data.color != None:
-        product.color = data.color
-
     if data.brandId != None:
         product.brandId = data.brandId
 
@@ -157,10 +172,31 @@ def update_Product(id:int , data:productSchema.updateProduct , curAdmin:User = D
     if data.categoryId != None:
         product.categoryId = data.categoryId
 
-    db.commit()
-    db.refresh(product)
+    if data.colors != None:
+        for i in data.colors:
+            color = db.query(Color).filter(Color.id == i).first()
+            if color == None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f"color with id-{i} not found")
 
-    return product
+        clrs = set(data.colors)
+
+        for productColor in product.productColors:
+            if productColor.colorId not in clrs:
+                db.delete(productColor)
+            else:
+                clrs.remove(productColor.colorId)
+        
+        for i in clrs:
+            productColor = ProductColor(
+                productId = product.id,
+                colorId = i
+            )
+            db.add(productColor)
+
+
+    db.commit()
+
+    return {"message" : "updated"}
 # ------------------------------------------------------------------
 
 

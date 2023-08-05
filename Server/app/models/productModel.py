@@ -10,6 +10,7 @@ from app.models.ratingModel import Rating
 from app.models.imageModel import ProductImage
 from app.models.cartModel import CartItem
 from app.models.orderModel import OrderItem
+from app.models.colorModel import ProductColor
 
 class Product(Base):
     __tablename__ = "products"
@@ -21,10 +22,20 @@ class Product(Base):
     price = Column(Integer , nullable=False)
     quantity = Column(Integer , nullable=False)
     sold = Column(Integer , default=0)
-    color = Column(String)
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
+    productColors = relationship("ProductColor" , back_populates="product" , cascade="all, delete")
+    @property
+    def colors(self):
+        result = []
+        for productColor in self.productColors:
+            result.append({
+                "id" : productColor.color.id,
+                "name" : productColor.color.name
+            })
+
+        return result
 
     brandId = Column(Integer , ForeignKey("brands.id"))
     brand = relationship("Brand" , back_populates="products")
