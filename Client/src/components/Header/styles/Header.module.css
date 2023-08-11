@@ -1,0 +1,382 @@
+
+
+.header
+{
+    /* border: 1px solid red; */
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================================================ PART 1 ==================================================== */
+
+
+.header .part1
+{
+    /* border: 1px solid blue; */
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    height: 60px;
+    padding: 0 15px;
+    background-color: var(--color-header-part1);
+}
+
+.header .part1 > *
+{
+    /* border: 0.4px solid red; */
+    height: 60px;
+    flex-shrink: 0;
+}
+
+
+/* ------------------------------- LEFT ----------------------------- */
+
+.header .part1 .left
+{
+    display: flex;
+    gap: 15px;
+}
+
+.header .part1 .left > *
+{
+    /* border: 2px solid yellow; */
+    /* TEMP */
+}
+
+
+.header .part1 .left .logo
+{
+    display: flex;
+    border: 1px solid transparent;
+    padding: 0 5px;
+    
+    height: 50px;
+    margin-top: 5px;
+}
+
+.header .part1 .left .logo:hover
+{
+    cursor: pointer;
+    border-color: var(--color-header-logo-border);
+}
+
+.header .part1 .left .logo img
+{
+    height: 30px;
+    margin-top: 10px;
+}
+
+.header .part1 .left .logo p
+{
+    margin-top: 11px;
+    font-size: 1.4rem;
+}
+
+
+.header .part1 .left .address
+{
+    height: 50px;
+    margin-top: 5px;
+    border: 1px solid transparent;
+    padding: 0 5px;
+}
+
+.header .part1 .left .address:hover
+{
+    border-color: var(--color-header-logo-border);
+    cursor: pointer;
+}
+
+/* -------------------------------------------------------------- */
+
+
+
+/* -------------------------------MIDDLE----------------------------- */
+.header .part1 .middle
+{
+    width: 100%;
+    display: flex;
+    flex-shrink: 1;
+}
+
+.header .part1 .middle > *
+{
+    flex-shrink: 0;
+    /* border: 1px solid red;  */
+    /* TEMP */
+}
+
+
+
+
+
+
+
+
+
+.header .part1 .middle .dropdown
+{
+    height: 40px;
+    margin-top: 10px;
+
+    display: flex;
+    position: relative;
+}
+
+.header .part1 .middle .dropdown .button
+{
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 5px;
+
+    padding: 0 10px;
+    background-color: #f3f3f3;
+    color: #333;
+
+    font-size: 12px;
+    border: 3px solid transparent;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.header .part1 .middle .dropdown img
+{
+    height: 10px;
+}
+
+.header .part1 .middle .dropdown select
+{
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: auto;
+    opacity: 0;
+    z-index: 0;
+}
+
+.header .part1 .middle .dropdown select:hover
+{
+    cursor: pointer;
+}
+
+.header .part1 .middle .dropdown:hover .button
+{
+    background-color: #dadada !important;
+    color: #000 !important;
+    cursor: pointer;
+    border: 3px solid #f3a847;
+}
+
+
+
+
+
+
+
+
+
+.header .part1 .searchInput
+{
+    z-index: 1;
+    width: 100%;
+    height: 40px;
+    margin-top: 10px;
+    flex-shrink: 1;
+
+    /* border: 1px solid yellow; */
+    /* TEMP */
+}
+
+
+.header .part1 .middle .searchInput input
+{
+    width: 100%;
+    height: 100%;
+    padding: 0 8px;
+    color: #111;
+    font-size: 15px;
+    border: 3px solid transparent;
+}
+
+.header .part1 .middle .searchInput input:focus
+{
+    outline: none;
+    border-color: #f3a847;
+}
+
+
+
+
+
+
+
+.header .part1 .middle .searchBtn
+{
+    background-color: #febd69;
+    height: 40px;
+    margin-top: 10px;
+    padding: 0 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.header .part1 .middle .searchBtn:hover
+{
+    background-color: #f3a847;
+    cursor: pointer;   
+}
+
+.header .part1 .middle .searchBtn img
+{
+    height: 25px;
+}
+/* -------------------------------------------------------------- */
+
+
+
+/* -------------------------------RIGHT----------------------------- */
+.header .part1 .right
+{
+    display: flex;
+    gap: 15px;
+}
+
+.header .part1 .right > *
+{
+    height: 50px;
+    margin-top: 5px;
+    border: 1px solid transparent;
+    padding: 0 5px;
+}
+
+.header .part1 .right > *:hover
+{
+    border-color: var(--color-header-logo-border);
+    cursor: pointer;
+}
+
+
+
+.header .part1 .right .account
+{
+    /* border: 1px solid yellow; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.header .part1 .right .account p img
+{
+    height: 10px;
+}
+
+.header .part1 .right .account .greet
+{
+    font-size: 12px;
+}
+
+
+
+
+
+.header .part1 .right .wishlist
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header .part1 .right .wishlist p img
+{
+    height: 15px;
+}
+
+.header .part1 .right .wishlist .first
+{
+    font-size: 12px;
+}
+
+
+
+
+.header .part1 .right .cart
+{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+}
+
+.header .part1 .right .cart img
+{
+    height: 40px;
+}
+
+.header .part1 .right .cart p
+{
+    font-size: 15px;
+    position: relative;
+    top: 5px;
+    left: -2px;
+}
+
+.header .part1 .right .cart span
+{
+    font-size: 15px;
+    position: absolute;
+    color: yellow;
+    top: 8px;
+    left: 24px;
+}
+
+/* -------------------------------------------------------------- */
+
+/* ==================================================================================================================== */
+
+
+
+/* ================================================ PART 2 ==================================================== */
+.header .part2
+{
+    /* border: 1px solid yellow; */
+    height: 40px;
+    background-color: #232f3e;
+
+    display: flex;
+    padding: 0 25%;
+    justify-content: space-around;
+}
+
+.header .part2 > *
+{
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    
+    border: 1px solid transparent;
+    padding: 0 5px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header .part2 > *:hover
+{
+    border-color: #ffffff;
+    cursor: pointer;
+}
+
+/* ==================================================================================================================== */
