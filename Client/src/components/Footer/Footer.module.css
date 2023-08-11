@@ -1,0 +1,100 @@
+
+
+.footer
+{
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+}
+
+.footer > *
+{
+    /* border: 1px solid yellow; */
+}
+
+
+/* -------------------------------BACK TO TOP----------------------------- */
+.footer .backToTop
+{
+    height: 50px;
+    background-color: #37475A;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.footer .backToTop:hover
+{
+    background-color: #485769;
+}
+/* -------------------------------------------------------------- */
+
+
+
+/* -------------------------------DETAILS----------------------------- */
+.footer .details
+{
+    /* border: 1px solid yellow; */
+    background-color: #232F3E;
+    padding: 40px 0;
+
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+
+    border-bottom: 2px solid #46586e;
+}
+
+.footer .details > *
+{
+    /* border: 1px solid red; */
+    color: white;
+}
+
+.footer .details h1
+{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.footer .details p
+{
+    font-size: 14px;
+}
+
+.footer .details p:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.footer .details .links
+{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+/* -------------------------------------------------------------- */
+
+
+
+/* -------------------------------LOGO----------------------------- */
+.footer .logo
+{
+    padding: 40px 0;
+    background-color: #232F3E;
+
+    display: flex;
+    justify-content: center;
+}
+
+.footer .logo img
+{
+    height: 30px;
+}
+/* -------------------------------------------------------------- */
