@@ -30,8 +30,12 @@ function Carousel(){
 
     return (
         <div className={styles.carousel}>
-            <button className={styles.left} onClick={handleBtn} name='left'>Left</button>
-            <button className={styles.right} onClick={handleBtn} name='right'>Right</button>
+            <button className={styles.left} onClick={handleBtn} name='left' data-left>
+                <img src="/left.svg" alt="left"/>
+            </button>
+            <button className={styles.right} onClick={handleBtn} name='right' data-right>
+                <img src="/right.svg" alt="right"/>
+            </button>
             <ul>
                 {images.map(function(i , ind){
                     return <img key={i.link} src={i.link} alt={i.name} style={{transform : `translateX(${imagePos*100}%)`}}/>
