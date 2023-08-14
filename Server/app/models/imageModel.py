@@ -13,7 +13,7 @@ class ProductImage(Base):
     productId = Column(Integer , ForeignKey("products.id"))
     name = Column(String , nullable=False)
     url = Column(String , nullable=False)
-    publicId = Column(String , nullable=False , unique=True)
+    publicId = Column(String , nullable=False)
     createdAt = Column(DateTime , default=datetime.utcnow)
 
     product = relationship("Product" , back_populates="images")
@@ -26,7 +26,7 @@ class BlogImage(Base):
     blogId = Column(Integer , ForeignKey("blogs.id"))
     name = Column(String , nullable=False)
     url = Column(String , nullable=False)
-    publicId = Column(String , nullable=False , unique=True)
+    publicId = Column(String , nullable=False)
     createdAt = Column(DateTime , default=datetime.utcnow)
 
     blog = relationship("Blog" , back_populates="images")

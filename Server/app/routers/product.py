@@ -1,4 +1,5 @@
 
+from annotated_types import LowerCase
 from fastapi import APIRouter , Depends, File , HTTPException, Query, UploadFile , status
 
 from app.database import getDb
@@ -79,21 +80,25 @@ def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_curr
 
 # ----------------------------GET ALL PRODUCTS-------------------------
 @prodRouter.get("/product" , response_model=list[productSchema.returnProduct])
-def get_All_Products(color:str=Query(None) , brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(10) , db:Session = Depends(getDb)):
+def get_All_Products(brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(10) , db:Session = Depends(getDb)):
     
     if sortBy!=None:
         if sortBy not in ["id" , "title" , "price" , "quantity" , "sold" , "brand"]:
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY , detail="invalid sort_by column")
 
     allProducts = db.query(Product)
-    if color != None:
-        allProducts = allProducts.filter(Product.color == color)
 
     if brand != None:
-        allProducts = allProducts.filter(Product.brand == brand)
+        brnd = db.query(Brand).filter(Brand.name.ilike(brand)).first()
+        if brnd == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail='brand not found')
+        allProducts = allProducts.filter(Product.brandId == brnd.id)
 
     if category != None:
-        allProducts = allProducts.filter(Product.category == category)
+        cat = db.query(ProdCategory).filter(ProdCategory.name==category).first()
+        if cat == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail='category not found')
+        allProducts = allProducts.filter(Product.categoryId == cat.id)
     
     if minPrice!=None:
         allProducts = allProducts.filter(Product.price >= minPrice)

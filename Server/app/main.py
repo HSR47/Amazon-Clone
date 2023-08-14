@@ -1,5 +1,8 @@
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from app.database import getDb
+from app.database import fillDatabase
+from sqlalchemy.orm.session import Session
 from app.routers.user import userRouter
 from app.routers.auth import authRouter
 from app.routers.product import prodRouter
@@ -34,3 +37,8 @@ app.include_router(colorRouter)
 @app.get("/")
 def home():
     return {"message" , "Hello World"}
+
+
+# @app.on_event('startup')
+# def startup_event():
+#     fillDatabase(cats=['phone' , 'laptop' , 'tablet'])
