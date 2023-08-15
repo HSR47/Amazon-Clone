@@ -1,8 +1,6 @@
 
-from fastapi import Depends, FastAPI
-from app.database import getDb
-from app.database import fillDatabase
-from sqlalchemy.orm.session import Session
+from fastapi import FastAPI
+from app.routers.scrape import scrapeRouter
 from app.routers.user import userRouter
 from app.routers.auth import authRouter
 from app.routers.product import prodRouter
@@ -20,6 +18,7 @@ from app.routers.color import colorRouter
 import app.database
 
 app = FastAPI()
+app.include_router(scrapeRouter)
 app.include_router(userRouter)
 app.include_router(authRouter)
 app.include_router(prodRouter)
@@ -39,6 +38,3 @@ def home():
     return {"message" , "Hello World"}
 
 
-# @app.on_event('startup')
-# def startup_event():
-#     fillDatabase(cats=['phone' , 'laptop' , 'tablet'])

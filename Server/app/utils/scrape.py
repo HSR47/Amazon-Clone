@@ -1,5 +1,3 @@
-
-from csv import DictWriter
 import time
 from bs4 import BeautifulSoup
 from requests_html import HTMLSession
@@ -45,20 +43,29 @@ def scrapeData(category , maxPages):
         for i in products:
             title:str = i.find('div' , {'class' : '_4rR01T'}).text
             price:str = i.find('div' , {'class' : '_30jeq3 _1_WHN1'}).text
-            description:str = i.find('div' , {'class' : 'fMghEO'}).text
-            img = i.find('img' , {'class' , '_396cs4'})
-            imgUrl:str = img['src']
-            imgAlt:str = img['alt']
+
+            productLink = baseUrl + i.find('a' , {'class' : '_1fQZEK'})['href']
+            productSoup = getdata(productLink)
+
+            allImages = []
+            images = productSoup.find_all('li' , {'class' : '_20Gt85 _1Y_A6W'})
+            for img in images:
+                allImages.append(img.find('img')['src'].replace('128/128' , '416/416'))
+
+            allHighlights = []
+            highlights = i.find_all('li' , {'class' : 'rgWa7D'})
+            for highlight in highlights:
+                allHighlights.append(highlight.text)
+
+            description = "_HSR_".join(allHighlights)
 
             data.append({
                 'title' : title,
                 'price' : cleanPrice(price),
                 'description' : description,
-                'imgUrl' : imgUrl,
-                'imgAlt' : imgAlt
+                'images' : allImages
             })
-
-        time.sleep(1)
+            
         url = getNextPage()
-    
+
     return data
