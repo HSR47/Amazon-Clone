@@ -4,8 +4,10 @@
 {
     /* border: 1px solid yellow; */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 20px;
 
     color: black;
 }
@@ -21,20 +23,61 @@
     /* border: 2px solid red; */
 
     position: relative;
-    overflow: hidden;
+
+    display: flex;
+    justify-content: space-between;
 }
+
+
+
+.carousel > button
+{
+    outline: none;
+    border: 1px solid transparent;
+    z-index: 4;
+    height: 250px;
+    width: 80px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0 , 0 , 0 , 0.3);
+}
+
+.carousel > button:hover
+{
+    border-color: white;
+    background-color: rgba(0 , 0 , 0 , 0.5);
+    cursor: pointer;
+}
+
+.carousel > button img
+{
+    height: 60px;
+}
+
+
+
 
 .carousel ul
 {
     display: flex;
+    position: absolute;
+    z-index: -2;
+    width: 100%;
+    height: 600px;
+
+    overflow: hidden;
+    
 }
 
 .carousel ul img
 {
     position: relative;
     width: 100%;
-
-
+    object-fit: cover;
+    object-position: center;
 
     transition: 500ms transform ease;
 }
@@ -43,7 +86,7 @@
 {
     content: "";
     position: absolute;
-    z-index: 3;
+    z-index: -1;
     left: 0;
     top: 0;
     width: 100%;
@@ -51,40 +94,114 @@
     background-image: linear-gradient(to bottom , rgba(220 , 220 , 220 , 0) 50%, rgba(220 , 220 , 220 , 1));
 }
 
+/* ==================================================================================================================== */
 
-.carousel button
+
+
+/* ================================================CATEGORY==================================================== */
+
+.category
 {
-    outline: none;
-    border: 1px solid transparent;
-    position: absolute;
-    z-index: 4;
-    height: 230px;
+    /* border: 2px solid red; */
+    width: 98%;
+    max-width: 1450px;
 
-    color: black;
-    background-color: rgba(0 , 0 , 0 , 0.3);
+    background-color: white;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.carousel button:hover
+.category > h1
+{
+    /* border: 2px solid yellow; */
+    text-transform: capitalize;
+    font-size: 25px;
+    font-weight: 500;
+}
+
+
+.category .slider
+{
+    position: relative;
+    overflow: hidden;
+}
+
+.category .slider > button
+{
+    background-color: rgb(0, 0, 0 , 0.3);
+    position: absolute;
+    z-index: 100;
+    top: 50%;
+    transform: translateY(-50%);
+
+    height: 100px;
+    cursor: pointer;
+}
+
+.category .slider > button:hover
 {
     border-color: white;
     background-color: rgba(0 , 0 , 0 , 0.5);
     cursor: pointer;
 }
 
-.carousel button[data-left]
+.category .slider > .left
 {
     left: 0;
 }
 
-.carousel button[data-right]
+.category .slider > .right
 {
     right: 0;
 }
 
-.carousel button img
+.category .slider > button img
 {
-    height: 60px;
+    height: 30px;
 }
+
+.category .slider ul
+{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 50px;
+
+    list-style: none;
+    /* border: 2px solid blue; */
+
+    transition: 500ms transform ease;
+}
+
+.category .slider li
+{
+    /* border: 2px solid green; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+    background-color: rgb(250, 250, 250);
+}
+
+.category .slider li > img
+{
+    height: 150px;
+    width: 200px;
+    object-fit: contain;
+
+}
+
+.category .slider li > p
+{
+    font-size: 20px;
+}
+
 
 
 /* ==================================================================================================================== */

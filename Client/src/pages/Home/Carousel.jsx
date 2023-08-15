@@ -28,11 +28,11 @@ function Carousel(){
         setImagePos(imagePos)
     }
 
-    useEffect(function(){
-        setInterval(function(){
-            leftBtnRef.current.click()
-        } , 10000)
-    } , [])
+    // useEffect(function(){
+    //     setInterval(function(){
+    //         leftBtnRef.current.click()
+    //     } , 10000)
+    // } , [])
 
 
     return (
