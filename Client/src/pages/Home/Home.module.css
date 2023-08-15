@@ -48,7 +48,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to bottom , rgba(255 , 255 , 255 , 0) 50%, rgba(255 , 255 , 255 , 0.8));
+    background-image: linear-gradient(to bottom , rgba(220 , 220 , 220 , 0) 50%, rgba(220 , 220 , 220 , 1));
 }
 
 

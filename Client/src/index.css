@@ -33,7 +33,7 @@ button
 
 body
 {
-    background-color: #222;
+    background-color: rgb(220, 220, 220);
     font-size: 1.6rem;
 
     min-width: 1000px;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './Home.module.css'
 
 let images = [
@@ -11,6 +11,7 @@ let images = [
 
 function Carousel(){
     let [imagePos , setImagePos] = useState(0)
+    let leftBtnRef = useRef(null)
 
     function handleBtn(e){
         if (e.target.name == 'left')
@@ -27,13 +28,19 @@ function Carousel(){
         setImagePos(imagePos)
     }
 
+    useEffect(function(){
+        setInterval(function(){
+            leftBtnRef.current.click()
+        } , 10000)
+    } , [])
+
 
     return (
         <div className={styles.carousel}>
-            <button className={styles.left} onClick={handleBtn} name='left' data-left>
+            <button ref={leftBtnRef} className={styles.left} onClick={handleBtn} name='left' data-left>
                 <img src="/left.svg" alt="left"/>
             </button>
-            <button className={styles.right} onClick={handleBtn} name='right' data-right>
+            <button  className={styles.right} onClick={handleBtn} name='right' data-right>
                 <img src="/right.svg" alt="right"/>
             </button>
             <ul>
