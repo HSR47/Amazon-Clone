@@ -21,7 +21,8 @@ def add_Brand(data:brandSchema.addBrandRequest , curAdmin:User = Depends(get_cur
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="brand already exists")
 
     brand = Brand(
-        name = data.name
+        name = data.name,
+        image = data.image
     )
     db.add(brand)
     db.commit()
@@ -60,8 +61,12 @@ def update_Brand(id:int , data:brandSchema.updateBrandRequest , curAdmin:User = 
 
     if data.name != None:
         brand.name = data.name
-        db.commit()
-        db.refresh(brand)
+
+    if data.image != None:
+        brand.image = data.image
+
+    db.commit()
+    db.refresh(brand)
 
     return brand
 # ------------------------------------------------------------------
