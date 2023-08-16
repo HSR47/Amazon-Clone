@@ -118,7 +118,7 @@
 {
     /* border: 2px solid yellow; */
     text-transform: capitalize;
-    font-size: 25px;
+    font-size: 22px;
     font-weight: 500;
 }
 
@@ -198,7 +198,7 @@
 
 .category .slider li > img
 {
-    height: 150px;
+    height: 120px;
     width: 200px;
     object-fit: contain;
 
@@ -206,7 +206,7 @@
 
 .category .slider li > p
 {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 /* ==================================================================================================================== */
@@ -289,10 +289,10 @@
 
 .square ul > li p
 {
-    /* white-space: nowrap; */
+    white-space: nowrap;
     overflow: hidden;
-    width: 100%;
-    height: 21px;
+    text-overflow: ellipsis;
+    max-width: 190px;
 }
 
 .square a
