@@ -129,8 +129,10 @@
     overflow: hidden;
 }
 
+
 .category .slider > button
 {
+    display: none;
     background-color: rgb(0, 0, 0 , 0.3);
     position: absolute;
     z-index: 100;
@@ -139,6 +141,11 @@
 
     height: 100px;
     cursor: pointer;
+}
+
+.category .slider:hover > button
+{
+    display: block;
 }
 
 .category .slider > button:hover

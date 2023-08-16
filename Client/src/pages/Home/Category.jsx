@@ -4,7 +4,6 @@ import styles from './Home.module.css'
 function Category(){
     let [pos , setPos] = useState(0)
     let [btnVisibility , setBtnVisibility] = useState(false)
-    let [hovering , setHovering] = useState(false)
 
     let ulRef = useRef(null)
     let totalElements = 12
@@ -37,12 +36,11 @@ function Category(){
             setBtnVisibility(true)
     } , [])
 
-
     return (
         <div className={styles.category}>
             <h1 className={styles.title}>Shop by category</h1>
-            <div className={styles.slider} onMouseEnter={function(){setHovering(true)}} onMouseLeave={function(){setHovering(false)}}>
-                {btnVisibility==true && hovering==true &&
+            <div className={styles.slider} >
+                {btnVisibility==true &&
                     <>
                         <button className={styles.left} name='left' onClick={handleBtnClick}>
                             <img src="/left.svg" alt="left" />
