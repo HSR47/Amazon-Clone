@@ -22,7 +22,8 @@ def add_Product_Category(data:categorySchema.addCategoryRequest , curAdmin:User 
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="category already exists")
 
     category = ProdCategory(
-        name = data.name
+        name = data.name,
+        image = data.image
     )
     db.add(category)
     db.commit()
@@ -61,9 +62,13 @@ def update_Product_Category(id:int , data:categorySchema.updateCategoryRequest ,
 
     if data.name != None:
         category.name = data.name
-        db.commit()
-        db.refresh(category)
+    
+    if data.image != None:
+        category.image = data.image
 
+    db.commit()
+    db.refresh(category)
+    
     return category
 # ------------------------------------------------------------------
 
