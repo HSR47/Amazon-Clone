@@ -2,14 +2,13 @@ import styles from './Home.module.css'
 
 function Square({info}){
     
-    console.log(info)
     return (
         <div className={styles.square}>
             <h1 className={styles.heading}>{info.heading}</h1>
             <ul>
-                {info.products.map(function(i){
+                {info.products.map(function(i , ind){
                     return (
-                        <li data-goto={i.url}>
+                        <li key={ind} data-goto={i.url}>
                             <img src={i.img}/>
                             <p>{i.title}</p>
                         </li>
