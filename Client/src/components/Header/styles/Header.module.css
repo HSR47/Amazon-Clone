@@ -23,6 +23,17 @@
     background-color: var(--color-header-part1);
 }
 
+.sticky
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+
+    transition: position 500ms ease;
+}
+
 .header .part1 > *
 {
     /* border: 0.4px solid red; */
