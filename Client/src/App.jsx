@@ -5,6 +5,8 @@ import Home from "./pages/Home/Home"
 import Contact from "./pages/Contact/Contact"
 import About from "./pages/About/About"
 import Layout from "./components/Layout"
+import SearchPage from "./pages/Search/SearchPage"
+
 function App() {
 
     return (
@@ -14,7 +16,8 @@ function App() {
                     <Route index element={<Home/>}/>
                     <Route path="about" element={<About/>}/>
                     <Route path="contact" element={<Contact/>}/>
-                </Route>
+                    <Route path="products/:slug" element={<SearchPage/>}/>
+                </Route> 
             </Routes>
         </BrowserRouter>
     )

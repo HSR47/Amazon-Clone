@@ -1,12 +1,83 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './Home.module.css'
+import { useNavigate } from 'react-router-dom'
+
+let categories = [
+    {
+        img : '/category/phone.jpg',
+        title : 'Phone',
+        slug : 'phone'
+    },
+    {
+        img : '/category/laptop.jpg',
+        title : 'Laptop',
+        slug : 'laptop'
+    },
+    {
+        img : '/category/tablet.jpg',
+        title : 'Tablet',
+        slug : 'tablet'
+    },
+    {
+        img : '/category/phone.jpg',
+        title : 'Phone',
+        slug : 'phone'
+    },
+    {
+        img : '/category/laptop.jpg',
+        title : 'Laptop',
+        slug : 'laptop'
+    },
+    {
+        img : '/category/tablet.jpg',
+        title : 'Tablet',
+        slug : 'tablet'
+    },
+    {
+        img : '/category/phone.jpg',
+        title : 'Phone',
+        slug : 'phone'
+    },
+    {
+        img : '/category/laptop.jpg',
+        title : 'Laptop',
+        slug : 'laptop'
+    },
+    {
+        img : '/category/tablet.jpg',
+        title : 'Tablet',
+        slug : 'tablet'
+    },
+    {
+        img : '/category/phone.jpg',
+        title : 'Phone',
+        slug : 'phone'
+    },
+    {
+        img : '/category/laptop.jpg',
+        title : 'Laptop',
+        slug : 'laptop'
+    },
+    {
+        img : '/category/tablet.jpg',
+        title : 'Tablet',
+        slug : 'tablet'
+    }
+]
 
 function Category(){
     let [pos , setPos] = useState(0)
     let [btnVisibility , setBtnVisibility] = useState(false)
+    let navigate = useNavigate()
 
     let ulRef = useRef(null)
-    let totalElements = 12
+    let totalElements = categories.length
+
+    function handleCategoryClick(e){
+        let cat = e.target.closest('li')
+        let url = `/products/${cat.dataset.slug}`
+        navigate(url)
+    }
 
     function handleBtnClick(e){
         let ulWidth = ulRef.current.offsetWidth
@@ -53,54 +124,14 @@ function Category(){
                 
 
                 <ul ref={ulRef} style={{transform : `translateX(${pos}px)`}}>
-                    <li>
-                        <img src="/category/phone.jpg" alt="phone" />
-                        <p>Phone</p>
-                    </li>
-                    <li>
-                        <img src="/category/laptop.jpg" alt="laptop" />
-                        <p>Laptop</p>
-                    </li>
-                    <li>
-                        <img src="/category/tablet.jpg" alt="tablet" />
-                        <p>Tablet</p>
-                    </li>
-                    <li>
-                        <img src="/category/phone.jpg" alt="phone" />
-                        <p>Phone</p>
-                    </li>
-                    <li>
-                        <img src="/category/laptop.jpg" alt="laptop" />
-                        <p>Laptop</p>
-                    </li>
-                    <li>
-                        <img src="/category/tablet.jpg" alt="tablet" />
-                        <p>Tablet</p>
-                    </li>
-                    <li>
-                        <img src="/category/phone.jpg" alt="phone" />
-                        <p>Phone</p>
-                    </li>
-                    <li>
-                        <img src="/category/laptop.jpg" alt="laptop" />
-                        <p>Laptop</p>
-                    </li>
-                    <li>
-                        <img src="/category/tablet.jpg" alt="tablet" />
-                        <p>Tablet</p>
-                    </li>
-                    <li>
-                        <img src="/category/phone.jpg" alt="phone" />
-                        <p>Phone</p>
-                    </li>
-                    <li>
-                        <img src="/category/laptop.jpg" alt="laptop" />
-                        <p>Laptop</p>
-                    </li>
-                    <li>
-                        <img src="/category/tablet.jpg" alt="tablet" />
-                        <p>Tablet</p>
-                    </li>
+                    {categories.map(function(i , ind){
+                        return (
+                            <li key={ind} data-slug={i.slug} onClick={handleCategoryClick}>
+                                <img src={i.img}/>
+                                <p>{i.title}</p>
+                            </li>
+                        )
+                    })}
                 </ul>
             </div>
         </div>
