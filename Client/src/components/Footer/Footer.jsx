@@ -11,9 +11,16 @@ function Footer()
 
     ]
 
+    function handleScrollToTop(){
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+    }
+
     return (
         <div className={styles.footer}>
-            <button className={styles.backToTop}>
+            <button className={styles.backToTop} onClick={handleScrollToTop}>
                 <p>Back to top</p>
             </button>
 
