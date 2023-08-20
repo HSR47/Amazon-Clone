@@ -11,7 +11,6 @@ function SearchPage(){
         <div className={styles.searchPage}>
             <SearchInfo/>
             <SearchResult/>
-            <Pagination/>
         </div>
     )
 }

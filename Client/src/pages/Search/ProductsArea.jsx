@@ -1,3 +1,4 @@
+import Pagination from './Pagination'
 import ProductRow from './ProductRow'
 import styles from './SearchPage.module.css'
 
@@ -27,7 +28,10 @@ function ProductArea(){
                     )
                 })}
             </div>
+            
+            <Pagination/>
         </div>
+
     )
 }
 

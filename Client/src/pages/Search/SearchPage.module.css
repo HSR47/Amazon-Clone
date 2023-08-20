@@ -326,4 +326,117 @@
 
 /* -------------------------------------------------------------- */
 
+
+
+/* -------------------------------PAGINATION----------------------------- */
+.paginationContainer
+{
+    margin: 20px 0 10px;
+    /* border: 2px solid red; */
+
+    display: flex;
+    justify-content: center;
+}
+
+.pagination 
+{
+    border: 2px solid #ccc;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    font-size: 14px;
+    border-radius: 12px;
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.pagination button
+{
+    color: black;
+    padding: 0px 20px;
+    /* border: 1px solid black; */
+    cursor: pointer;
+}
+
+.pagination button[data-active]
+{
+    border: 1px solid #000;
+}
+
+.pagination .prev
+{
+    border-radius: 12px 0 0 12px;
+    position: relative;
+}
+
+.pagination .next
+{
+    border-radius: 0 12px 12px 0;
+    position: relative;
+}
+
+.pagination .prev::after
+{
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 35px;
+    margin-top: 7.5px;
+    background-color: #ccc;
+}
+
+.pagination .next::after
+{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 35px;
+    margin-top: 7.5px;
+    background-color: #ccc;
+}
+
+.pagination button:hover
+{
+    background-color: #f5f6f6;
+}
+
+.pagination button[data-active]:hover
+{
+    background-color: #fff;
+    cursor: default;
+}
+
+.pagination .dot
+{
+    cursor: default;
+}
+
+.pagination .dot:hover
+{
+    background-color: #fff;
+}
+
+
+
+.pagination img
+{
+    height: 12px;
+}
+
+.pagination img[data-left]
+{
+    padding-right: 5px;
+}
+
+.pagination img[data-right]
+{
+    padding-left: 5px;
+}
+/* -------------------------------------------------------------- */
+
+
 /* ==================================================================================================================== */
