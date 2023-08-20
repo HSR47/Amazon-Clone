@@ -3,6 +3,9 @@
 {
     /* border: 4px solid red; */
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -10,6 +13,7 @@
 
 .searchInfoContainer
 {
+    width: 100%;
     border-bottom: 2px solid #ccc;
     box-shadow: 0 0 10px #ddd;
 }
@@ -21,7 +25,7 @@
     align-items: center;
     max-width: 1800px;
     margin: 0 auto;
-    padding: 0 5px;
+    padding: 0 10px;
 
     height: 40px;
 }
@@ -98,4 +102,228 @@
     background-color: #EDFDFF;
     border: 1px solid #007185;
 }
+/* ==================================================================================================================== */
+
+
+/* ================================================ SEARCH RESULT ==================================================== */
+
+.searchResult
+{
+    /* border: 2px solid red; */
+    width: 100%;
+    max-width: 1800px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.searchResult > *
+{
+    /* border: 1px solid blue; */
+}
+
+.searchResult .filterArea
+{
+    width: calc(0.2 * 100%);
+}
+
+
+
+/* -------------------------------PRODUCT AREA----------------------------- */
+.searchResult .productArea
+{
+    width: calc((0.8 * 100%) - 10px);
+    margin-left: 10px;
+}
+
+.searchResult .heading
+{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.searchResult .prodContainer
+{
+    /* border: 2px solid red; */
+    margin-top: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.searchResult .productRow
+{
+    /* border: 0.1px solid black; */
+    border: 0.5px solid #ccc;
+    display: flex;
+}
+
+.searchResult .productRow .imgContainer
+{
+    flex-shrink: 0;
+    width: calc(0.25 * 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.searchResult .productRow .imgContainer img
+{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.searchResult .productRow .imgContainer::after
+{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.03;
+    pointer-events: none;
+}
+
+.searchResult .productRow .details
+{
+    /* border: 2px solid red; */
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0 ;
+    padding-left: 20px;
+}
+
+.searchResult .productRow .details > *
+{
+    /* border: 2px solid blue; */
+}
+
+.searchResult .productRow .details .title
+{
+    font-size: 18px;
+    font-weight: 400;
+    padding-right: 8px;
+}
+
+
+/* -------------------------------RATING----------------------------- */
+.searchResult .productRow .details .rating
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.searchResult .productRow .details .rating .value
+{
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.searchResult .productRow .details .rating .total
+{
+    font-weight: 400;
+    font-size: 14px;
+    color: #007185;
+}
+
+.productRow .rating .stars
+{
+    background-image: url("https://m.media-amazon.com/images/S/sash/ouR9NRElwmzAIev.png");
+    background-size: 512px 512px;
+    height: 18px;
+    width: 80px;
+}
+
+.productRow .rating .stars[data-value='5']
+{
+    background-position: -2px -2px;
+}
+
+.productRow .rating .stars[data-value='4.5']
+{
+    background-position: -2px -42px;
+}
+
+.productRow .rating .stars[data-value='4']
+{
+    background-position: -2px -22px;
+}
+
+.productRow .rating .stars[data-value='3.5']
+{
+    background-position: -2px -82px;
+}
+
+.productRow .rating .stars[data-value='3']
+{
+    background-position: -2px -62px;
+}
+
+.productRow .rating .stars[data-value='2.5']
+{
+    background-position: -2px -122px;
+}
+
+.productRow .rating .stars[data-value='2']
+{
+    background-position: -2px -102px;
+}
+
+.productRow .rating .stars[data-value='1.5']
+{
+    background-position: -2px -162px;
+}
+
+.productRow .rating .stars[data-value='1']
+{
+    background-position: -2px -142px;
+}
+
+.productRow .rating .stars[data-value='0.5']
+{
+    background-position: -2px -202px;
+}
+
+.productRow .rating .stars[data-value='0']
+{
+    background-position: -2px -182px;
+}
+/* -------------------------------------------------------------- */
+
+
+.searchResult .productRow .details .price
+{
+    font-size: 28px;
+    font-weight: 400;
+    display: flex;
+}
+
+.searchResult .productRow .details .price span
+{
+    font-size: 14px;
+    font-weight: 400;
+    padding-top: 2px;
+}
+
+.searchResult .productRow .details .deliveryIn
+{
+    font-size: 14px;
+
+}
+
+.searchResult .productRow .details .deliveryIn span
+{
+    font-weight: 500;
+}
+
+/* -------------------------------------------------------------- */
+
 /* ==================================================================================================================== */

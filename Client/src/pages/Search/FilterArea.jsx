@@ -2,7 +2,9 @@ import styles from './SearchPage.module.css'
 
 function FilterArea(){
     return (
-        <h1>FilterArea</h1>
+        <div className={styles.filterArea}>
+            <h1>FilterArea</h1>
+        </div>
     )
 }
 

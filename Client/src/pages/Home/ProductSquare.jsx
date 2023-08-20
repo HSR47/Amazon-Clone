@@ -12,7 +12,7 @@ function ProductSquare({info}){
         <div className={styles.productSquare}>
             <img src={info.images[activeImage]}/>
             <p className={styles.heading}><span>{info.title}</span></p>
-            <h1 className={styles.price}><span>₹</span>{info.price}</h1>
+            <h1 className={styles.price}><span>₹</span>{info.price.toLocaleString()}</h1>
             <ul>
                 {info.images.map(function(i , ind){
                     return (
