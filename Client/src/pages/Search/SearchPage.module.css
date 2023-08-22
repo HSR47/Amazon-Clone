@@ -233,69 +233,6 @@
     font-size: 14px;
     color: #007185;
 }
-
-.productRow .rating .stars
-{
-    background-image: url("https://m.media-amazon.com/images/S/sash/ouR9NRElwmzAIev.png");
-    background-size: 512px 512px;
-    height: 18px;
-    width: 80px;
-}
-
-.productRow .rating .stars[data-value='5']
-{
-    background-position: -2px -2px;
-}
-
-.productRow .rating .stars[data-value='4.5']
-{
-    background-position: -2px -42px;
-}
-
-.productRow .rating .stars[data-value='4']
-{
-    background-position: -2px -22px;
-}
-
-.productRow .rating .stars[data-value='3.5']
-{
-    background-position: -2px -82px;
-}
-
-.productRow .rating .stars[data-value='3']
-{
-    background-position: -2px -62px;
-}
-
-.productRow .rating .stars[data-value='2.5']
-{
-    background-position: -2px -122px;
-}
-
-.productRow .rating .stars[data-value='2']
-{
-    background-position: -2px -102px;
-}
-
-.productRow .rating .stars[data-value='1.5']
-{
-    background-position: -2px -162px;
-}
-
-.productRow .rating .stars[data-value='1']
-{
-    background-position: -2px -142px;
-}
-
-.productRow .rating .stars[data-value='0.5']
-{
-    background-position: -2px -202px;
-}
-
-.productRow .rating .stars[data-value='0']
-{
-    background-position: -2px -182px;
-}
 /* -------------------------------------------------------------- */
 
 

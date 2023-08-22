@@ -1,0 +1,251 @@
+
+.productPage
+{
+    border: 2px solid red;
+    margin: 20px 0;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.productPage .row1
+{
+    border: 2px solid blue;
+    width: 98%;
+    max-width: 1800px;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.productPage .row1 > *
+{
+    border:  2px solid black;
+}
+
+
+/* ================================================ DETAILS ==================================================== */
+.productPage .row1 .details
+{
+    width: 60%;
+    padding-left: 10px;
+}
+
+.productPage .row1 .details .title
+{
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.productPage .row1 .details .brand
+{
+    color: #007185;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+
+/* -------------------------------RATING----------------------------- */
+.productPage .row1 .details .rating
+{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    font-size: 14px;
+
+    border-bottom: 2px solid #ccc;
+}
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------PRICE----------------------------- */
+.productPage .row1 .details .price
+{
+    font-size: 28px;
+    margin: 15px 0;
+
+    display: flex;
+}
+
+.productPage .row1 .details .price span
+{
+    font-size: 16px;
+    padding-top: 3px;
+}
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------EMI----------------------------- */
+.productPage .row1 .details .emi
+{
+    font-size: 14px;
+    line-height: 20px;
+    color: #0F1111;
+
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+}
+
+.productPage .row1 .details .emi span
+{
+    font-weight: 500;
+}
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------OFFERS----------------------------- */
+.productPage .row1 .details .offers
+{
+    /* border: 2px solid red; */
+    /* display: inline-block; */
+    margin-top: 10px;
+
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ccc;
+}
+
+.productPage .row1 .details .offers .container
+{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.productPage .row1 .details .offers .icon
+{
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    position: relative;
+}
+
+.productPage .row1 .details .offers .icon img
+{
+    margin-top: -25px;
+    max-height: none;
+    position: absolute;
+    max-width: 100%;
+    border: 0;
+    vertical-align: top;
+}
+
+.productPage .row1 .details .offers .container h1
+{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.productPage .row1 .details .offers ul
+{
+    margin-top: 8px;
+
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.productPage .row1 .details .offers li
+{
+    max-width: 150px;
+    box-shadow: 0 0 4px 0 rgba(0,0,0,.3);
+    border-radius: 5px;
+    padding: 7px 10px;
+
+    font-size: 14px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.productPage .row1 .details .offers li div
+{
+    font-weight: 600;
+}
+
+.productPage .row1 .details .offers li p
+{
+    line-height: 18px;
+}
+
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------FEATURES----------------------------- */
+.productPage .details .features
+{
+    margin-top: 10px;
+    /* border: 2px solid red; */
+
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+
+    font-size: 14px;
+
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ccc;
+}
+
+.productPage .details .features > div
+{
+    width: 100%;
+    max-width: 120px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+
+}
+
+.productPage .details .features img
+{
+    height: 35px;
+    width: 35px;
+}
+
+.productPage .details .features > div p
+{
+    text-align: center;
+    color: #007185;
+}
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------DESCRIPTION----------------------------- */
+.productPage .details .desc
+{
+    /* border: 2px solid red; */
+    margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.productPage .details .desc h1
+{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.productPage .details .desc p
+{
+    font-size: 14px;
+    line-height: 20px;
+}
+/* -------------------------------------------------------------- */
+
+/* ==================================================================================================================== */
+
+
+/* ================================================ IMAGE ==================================================== */
+.productPage .row1 .image
+{
+    width: 40%;
+}
+/* ==================================================================================================================== */

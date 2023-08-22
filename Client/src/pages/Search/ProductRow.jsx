@@ -65,7 +65,7 @@ function ProductRow({ info }) {
                 <p className={styles.title}>{info.title}</p>
                 <div className={styles.rating}>
                     <div className={styles.value}>{info.stars}</div>
-                    <div className={styles.stars} data-value={roundStars(info.stars)}></div>
+                    <div id='stars' data-value={roundStars(info.stars)}></div>
                     <div className={styles.total}>68</div>
                 </div>
                 <div className={styles.price}><span>₹</span>{info.price.toLocaleString()}</div>

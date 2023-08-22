@@ -33,7 +33,7 @@ button
 
 body
 {
-    background-color: rgb(220, 220, 220);
+    background-color: white;
     font-size: 1.6rem;
 
     min-width: 1000px;
@@ -43,3 +43,134 @@ ul
 {
     list-style: none;
 }
+
+
+
+/* ------------------------------- STARS ----------------------------- */
+
+#stars
+{
+    background-image: url("https://m.media-amazon.com/images/S/sash/ouR9NRElwmzAIev.png");
+    background-size: 512px 512px;
+    height: 18px;
+    width: 80px;
+}
+
+#stars[data-value='5']
+{
+    background-position: -2px -2px;
+}
+
+#stars[data-value='4.5']
+{
+    background-position: -2px -42px;
+}
+
+#stars[data-value='4']
+{
+    background-position: -2px -22px;
+}
+
+#stars[data-value='3.5']
+{
+    background-position: -2px -82px;
+}
+
+#stars[data-value='3']
+{
+    background-position: -2px -62px;
+}
+
+#stars[data-value='2.5']
+{
+    background-position: -2px -122px;
+}
+
+#stars[data-value='2']
+{
+    background-position: -2px -102px;
+}
+
+#stars[data-value='1.5']
+{
+    background-position: -2px -162px;
+}
+
+#stars[data-value='1']
+{
+    background-position: -2px -142px;
+}
+
+#stars[data-value='0.5']
+{
+    background-position: -2px -202px;
+}
+
+#stars[data-value='0']
+{
+    background-position: -2px -182px;
+}
+/* -------------------------------------------------------------- */
+
+
+/* -------------------------------FULFILLED----------------------------- */
+
+#fulfilled
+{
+    display: inline-block;
+}
+
+#container
+{
+    background-color: #3e4650;
+    padding: 3px 4px 3px 5px;
+    border-radius: 2px 0 0 2px;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    position: relative;
+}
+
+#fulfilled #icon
+{
+    background-image: url('https://m.media-amazon.com/images/S/sash/NzPf$fHil8CgZmI.png');
+    background-size: 512px 256px;
+    background-repeat: no-repeat;
+    height: 13px;
+    width: 13px;
+    background-position: -118px -2px;
+
+}
+
+#fulfilled #text
+{
+    font-size: 12px;
+}
+
+#container::before
+{
+    content: "";
+    position: absolute;
+    right: -5px;
+    bottom: 0;
+    border-style: dashed;
+    border-width: 6px;
+    border-color: rgb(255, 255, 255 , 0);
+    border-bottom: 10px solid #3e4650;
+}
+
+#container::after
+{
+    content: "";
+    position: absolute;
+    right: -5px;
+    top: 0;
+    border-style: dashed;
+    border-width: 6px;
+    border-color: rgb(255, 255, 255 , 0);
+    border-top: 10px solid #3e4650;
+}
+/* -------------------------------------------------------------- */

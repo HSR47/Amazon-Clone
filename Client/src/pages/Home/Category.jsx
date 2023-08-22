@@ -75,7 +75,7 @@ function Category(){
 
     function handleCategoryClick(e){
         let cat = e.target.closest('li')
-        let url = `/products/${cat.dataset.slug}`
+        let url = `/search?cat=${cat.dataset.slug}`
         navigate(url)
     }
 

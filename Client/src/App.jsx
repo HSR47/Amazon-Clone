@@ -6,6 +6,7 @@ import Contact from "./pages/Contact/Contact"
 import About from "./pages/About/About"
 import Layout from "./components/Layout"
 import SearchPage from "./pages/Search/SearchPage"
+import ProductPage from "./pages/Product/ProductPage"
 
 function App() {
 
@@ -16,7 +17,8 @@ function App() {
                     <Route index element={<Home/>}/>
                     <Route path="about" element={<About/>}/>
                     <Route path="contact" element={<Contact/>}/>
-                    <Route path="products/:slug" element={<SearchPage/>}/>
+                    <Route path="search" element={<SearchPage/>}/>
+                    <Route path="product/:id" element={<ProductPage/>}/>
                 </Route> 
             </Routes>
         </BrowserRouter>
