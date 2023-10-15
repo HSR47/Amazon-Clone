@@ -3,14 +3,11 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.blogModel import Blog
-from app.models.categoryModel import BlogCategory, ProdCategory
 from app.models.productModel import Product
 
 from app.models.userModel import User
 from app.models.wishlistModel import Wishlist
 from app.routers.auth import get_current_admin, get_current_customer, get_current_user
-import app.schemas.categorySchema as categorySchema
 
 wishRouter = APIRouter(tags=["Wishlist"])
 

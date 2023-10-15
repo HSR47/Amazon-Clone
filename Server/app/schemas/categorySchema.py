@@ -6,7 +6,7 @@ from datetime import datetime
 
 class addCategoryRequest(BaseModel):
     name : str
-    image : Optional[str] = Field(default=None)
+    image : str | None
 
     @validator("name")
     def validateStrip(cls , value:str):
@@ -33,8 +33,8 @@ class returnCategory(BaseModel):
 
 
 class updateCategoryRequest(BaseModel):
-    name : Optional[str] = Field(default=None)
-    image : Optional[str] = Field(default=None)
+    name : str
+    image : str | None
 
     @validator("name")
     def validateStrip(cls , value:str):

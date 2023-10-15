@@ -6,7 +6,6 @@ from datetime import datetime
 from app.models import Base
 
 
-# ----------------------------PRODUCT CATEGORY-------------------------
 class Brand(Base):
     __tablename__ = "brands"
 
@@ -17,4 +16,3 @@ class Brand(Base):
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     products = relationship("Product" , back_populates="brand" , cascade="all, delete")
-# ------------------------------------------------------------------

@@ -51,9 +51,7 @@ def update_rating(id:int , data:ratingSchema.ratingRequest , curCustomer:User = 
     if rating == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not rated")
 
-    if data.star != None:
-        rating.star = data.star
-
+    rating.star = data.star
     rating.comment = data.comment
     
     db.commit()

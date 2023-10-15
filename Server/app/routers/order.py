@@ -4,17 +4,13 @@ from httpx import delete
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.brandModel import Brand
-from app.models.cartModel import CartItem
-from app.models.couponModel import Coupon
+
 from app.models.orderModel import Order, OrderItem
+from app.models.cartModel import CartItem
 from app.models.paymentModel import Payment
-from app.models.productModel import Product
 
 from app.models.userModel import User
 from app.routers.auth import get_current_admin, get_current_customer, get_current_user
-import app.schemas.brandSchema as brandSchema
-from app.schemas.cartSchema import addToCartRequest, updateCartRequest
 from app.schemas.orderSchema import placeOrderRequest, returnOrder, updateOrderRequest
 
 orderRouter = APIRouter(tags=["Order"])
@@ -35,12 +31,14 @@ def place_order(data:placeOrderRequest , curCust:User = Depends(get_current_cust
     db.commit()
     db.refresh(order)
 
-    for cartItem in curCust.cartItems:
+    for i in curCust.cartItems:
+        cartItem:CartItem = i
+
         orderItem = OrderItem(
             orderId = order.id,
             productId = cartItem.productId,
             count = cartItem.count,
-            price = (cartItem.disPrice).__ceil__()
+            price = (cartItem.product.discountPrice).__ceil__()
         )
 
         db.add(orderItem)
@@ -93,6 +91,19 @@ def get_customer_order(curCust:User = Depends(get_current_customer) , db:Session
     allOrders = db.query(Order).filter(Order.userId == curCust.id).all()
     return allOrders
 # ------------------------------------------------------------------
+
+
+# ----------------------------GET CUSTOMER SPECIFIC ORDER-------------------------
+@orderRouter.get("/cust-order/{id}" , response_model=returnOrder)
+def get_customer_specific_order(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+
+    order = db.query(Order).filter((Order.id == id) & (Order.userId == curCust.id)).first()
+    if order == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="order not found")
+    
+    return order
+# ------------------------------------------------------------------
+
 
 
 # ----------------------------UPDATE ORDER STATUS-------------------------

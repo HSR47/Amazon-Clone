@@ -1,12 +1,10 @@
 
-from annotated_types import LowerCase
 from fastapi import APIRouter , Depends, File , HTTPException, Query, UploadFile , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.brandModel import Brand
 from app.models.categoryModel import ProdCategory
-from app.models.colorModel import Color, ProductColor
 from app.models.imageModel import ProductImage
 from app.models.productModel import Product
 from app.models.userModel import User
@@ -31,46 +29,26 @@ def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_curr
     if check != None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="slug already exists")
 
-    if data.categoryId != None:
-        checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
-        if checkCategory == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
+    checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
+    if checkCategory == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
         
-    if data.brandId != None:
-        checkBrand = db.query(Brand).filter(Brand.id == data.brandId).first()
-        if checkBrand == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
-
-    colors:list[Color] = []
-    if data.colors != None:
-        for i in data.colors:
-            color = db.query(Color).filter(Color.id == i).first()
-            if color == None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f"color with id-{i} not found")
-            colors.append(color)
+    checkBrand = db.query(Brand).filter(Brand.id == data.brandId).first()
+    if checkBrand == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
 
     newProduct:Product = Product(
         title = data.title,
         slug = slug,
         description = data.description,
-        price = data.price,
+        regularPrice = data.regularPrice,
+        discountPrice = data.discountPrice,
         quantity = data.quantity,
-        sold = data.sold,
         brandId = data.brandId,
         categoryId = data.categoryId
     )
 
     db.add(newProduct)
-    db.commit()
-    db.refresh(newProduct)
-
-    for i in colors:
-        productColor = ProductColor(
-            productId = newProduct.id,
-            colorId = i.id,
-        )
-        db.add(productColor)
-
     db.commit()
     db.refresh(newProduct)
 
@@ -80,7 +58,7 @@ def add_Product(data:productSchema.addProduct , curAdmin:User = Depends(get_curr
 
 # ----------------------------GET ALL PRODUCTS-------------------------
 @prodRouter.get("/product" , response_model=list[productSchema.returnProduct])
-def get_All_Products(brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(10) , db:Session = Depends(getDb)):
+def get_All_Products(brand:str=Query(None) , category:str=Query(None) , minPrice:int=Query(None) , maxPrice:int=Query(None) , sortBy:str=Query(None) , page:int=Query(1) , limit:int=Query(15) , db:Session = Depends(getDb)):
     
     if sortBy!=None:
         if sortBy not in ["id" , "title" , "price" , "quantity" , "sold" , "brand"]:
@@ -135,69 +113,34 @@ def update_Product(id:int , data:productSchema.updateProduct , curAdmin:User = D
     if product == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
     
-
-    slug = None
-    if data.title != None:
+    slug = product.slug
+    if data.title != product.title:
         slug = slugify(data.title)
 
         check = db.query(Product).filter(Product.slug == slug).first()
         if check != None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="slug already exists")
 
-    if data.categoryId != None:
+    if data.categoryId != product.categoryId:
         checkCategory = db.query(ProdCategory).filter(ProdCategory.id == data.categoryId).first()
         if checkCategory == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
 
-    if data.brandId != None:
+    if data.brandId != product.brandId:
         checkBrand = db.query(Brand).filter(Brand.id == data.brandId).first()
         if checkBrand == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
         
-        
-    if data.title != None:
-        product.title = data.title
-        product.slug = slug
-    
-    if data.description != None:
-        product.description = data.description
-    
-    if data.price != None:
-        product.price = data.price
 
-    if data.quantity != None:
-        product.quantity = data.quantity
-
-    if data.brandId != None:
-        product.brandId = data.brandId
-
-    if data.sold != None:
-        product.sold = data.sold
-    
-    if data.categoryId != None:
-        product.categoryId = data.categoryId
-
-    if data.colors != None:
-        for i in data.colors:
-            color = db.query(Color).filter(Color.id == i).first()
-            if color == None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f"color with id-{i} not found")
-
-        clrs = set(data.colors)
-
-        for productColor in product.productColors:
-            if productColor.colorId not in clrs:
-                db.delete(productColor)
-            else:
-                clrs.remove(productColor.colorId)
-        
-        for i in clrs:
-            productColor = ProductColor(
-                productId = product.id,
-                colorId = i
-            )
-            db.add(productColor)
-
+    product.title = data.title
+    product.slug = slug
+    product.description = data.description
+    product.regularPrice = data.regularPrice
+    product.discountPrice = data.discountPrice
+    product.quantity = data.quantity
+    product.brandId = data.brandId
+    product.sold = data.sold
+    product.categoryId = data.categoryId
 
     db.commit()
 

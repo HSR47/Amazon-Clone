@@ -3,8 +3,7 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.blogModel import Blog
-from app.models.categoryModel import BlogCategory, ProdCategory
+from app.models.categoryModel import ProdCategory
 
 from app.models.userModel import User
 from app.routers.auth import get_current_admin
@@ -60,11 +59,8 @@ def update_Product_Category(id:int , data:categorySchema.updateCategoryRequest ,
     if category == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
 
-    if data.name != None:
-        category.name = data.name
-    
-    if data.image != None:
-        category.image = data.image
+    category.name = data.name
+    category.image = data.image
 
     db.commit()
     db.refresh(category)

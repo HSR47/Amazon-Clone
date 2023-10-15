@@ -6,7 +6,7 @@ from datetime import datetime
 
 class addBrandRequest(BaseModel):
     name : str
-    image : Optional[str] = Field(default=None)
+    image : str | None
 
     @validator("name")
     def validateStrip(cls , value:str):
@@ -33,8 +33,8 @@ class returnBrand(BaseModel):
 
 
 class updateBrandRequest(BaseModel):
-    name : Optional[str] = Field(default=None)
-    image : Optional[str] = Field(default=None)
+    name : str
+    image : str | None
 
     @validator("name")
     def validateStrip(cls , value:str):

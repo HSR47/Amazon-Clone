@@ -5,12 +5,12 @@ from datetime import datetime
 
 
 class registerUser(BaseModel):
+    email : EmailStr
+    password : str = Field(pattern=r"^.{6,20}$")
     fname : str
     lname : str
-    role : str = Field(pattern=r"^(customer|admin)$")
-    email : EmailStr
     mobile : str = Field(pattern=r"^[0-9]{10}$")
-    password : str = Field(pattern=r"^.{6,20}$")
+    isAdmin : bool
 
     @validator("fname" , "lname" , "email" , "mobile")
     def validateStrip(cls , value:str):
@@ -33,13 +33,11 @@ class returnUser(BaseModel):
     id : int
     fname : str
     lname : str
-    role : str
+    isAdmin : bool
     email : EmailStr
     mobile : str
-    blocked : bool
     createdAt : datetime
     updatedAt : datetime
-    wishlistProducts : list[int]
 
     class Config:
         from_attributes = True
@@ -47,20 +45,16 @@ class returnUser(BaseModel):
 
 
 class updateUser(BaseModel):
-    fname : Optional[str] = Field(default=None)
-    lname : Optional[str] = Field(default=None)
-    mobile : Optional[str] = Field(default=None , pattern=r"^[0-9]{10}$")
+    fname : str
+    lname : str
+    mobile : str = Field(pattern=r"^[0-9]{10}$")
 
     @validator("fname" , "lname" , "mobile")
     def validateStrip(cls , value:str):
-        if value == None:
-            return value
         return value.strip()
 
     @validator("fname" , "lname")
     def validateOneWord(cls , value:str):
-        if value == None:
-            return value
         if " " in value:
             raise ValueError("fname and lname must contain only one word")
         
@@ -68,6 +62,4 @@ class updateUser(BaseModel):
 
     @validator("fname" , "lname")
     def validateLowerCase(cls , value:str):
-        if value == None:
-            return value
         return value.lower()

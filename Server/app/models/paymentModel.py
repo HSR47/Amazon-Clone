@@ -12,17 +12,9 @@ class PaymentMethod(pyEnum):
 class Payment(Base):
     __tablename__ = "payments"
 
+    id = Column(Integer , primary_key=True)
     orderId = Column(Integer , ForeignKey("orders.id") , nullable=False)
     method = Column(Enum(PaymentMethod) , default=PaymentMethod.cod , nullable=False) 
-
-    id = Column(Integer , primary_key=True)
     createdAt = Column(DateTime , default=datetime.utcnow)
 
     order = relationship("Order" , back_populates="payment")
-
-    @property
-    def amount(self):
-        total = 0
-        for orderItem in self.order.orderItems:
-            total += orderItem.price * orderItem.count
-        return int(total)

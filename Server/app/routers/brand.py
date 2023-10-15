@@ -52,18 +52,15 @@ def get_Specific_Brand(id:int , curAdmin:User = Depends(get_current_admin) , db:
 
 
 # ----------------------------UPDATE BRAND-------------------------
-@brandRouter.patch("/brand/{id}" , response_model=brandSchema.returnBrand)
+@brandRouter.put("/brand/{id}" , response_model=brandSchema.returnBrand)
 def update_Brand(id:int , data:brandSchema.updateBrandRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
 
     brand:Brand = db.query(Brand).filter(Brand.id == id).first()
     if brand == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
 
-    if data.name != None:
-        brand.name = data.name
-
-    if data.image != None:
-        brand.image = data.image
+    brand.name = data.name
+    brand.image = data.image
 
     db.commit()
     db.refresh(brand)

@@ -3,44 +3,29 @@ from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTim
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models import Base
-from app.models.blogModel import Blog
-from app.models.likeDislikeModel import Like , Dislike
-from app.models.wishlistModel import Wishlist
-from app.models.ratingModel import Rating
-from app.models.cartModel import CartItem
-from app.models.orderModel import Order
+from app.models.addressModel import Address
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer , primary_key=True)
-    role = Column(String , nullable=False)
+    email = Column(String , nullable=False , unique=True)
+    password = Column(String , nullable=False)
     fname = Column(String , nullable=False)
     lname = Column(String , nullable=False)
-    email = Column(String , nullable=False , unique=True)
     mobile = Column(String , nullable=False , unique=True)
-    password = Column(String , nullable=False)
-    blocked = Column(Boolean , nullable=False , default=False)
+    isAdmin = Column(Boolean , nullable=False)
+
     refreshToken = Column(String)
     passResetToken = Column(String)
     passResetTokenExp = Column(DateTime)
     createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
     updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
-    blogs = relationship("Blog" , back_populates="author" , cascade="all, delete")
-    likes = relationship("Like" , back_populates="user" , cascade="all, delete")
-    dislikes = relationship("Dislike" , back_populates="user" , cascade="all, delete")
+
+    address = relationship("Address" , back_populates="user" , cascade="all, delete")
     ratings = relationship("Rating" , back_populates="user" , cascade="all, delete")
-    
-    couponId = Column(Integer , ForeignKey("coupons.id") , nullable=True , default=None)
-    coupon = relationship("Coupon" , back_populates="users")
-
-    wishlists = relationship("Wishlist" , back_populates="user" , cascade="all, delete")
-    @property
-    def wishlistProducts(self):
-        return [wishlist.productId for wishlist in self.wishlists]
-    
-
-    cartItems = relationship("CartItem" , back_populates="user" , cascade="all, delete")
-
     orders = relationship("Order" , back_populates="user" , cascade="all, delete")
+    wishlists = relationship("Wishlist" , back_populates="user" , cascade="all, delete")
+    cartItems = relationship("CartItem" , back_populates="user" , cascade="all, delete")
+    

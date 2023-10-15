@@ -1,7 +1,14 @@
 
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
+from app.models.brandModel import Brand
+from app.models.cartModel import CartItem
+from app.models.categoryModel import ProdCategory
+from app.models.imageModel import ProductImage
+from app.models.orderModel import OrderItem
+from app.models.ratingModel import Rating
+from app.models.wishlistModel import Wishlist
 
 from app.schemas.ratingSchema import returnRating
 
@@ -9,12 +16,11 @@ from app.schemas.ratingSchema import returnRating
 class addProduct(BaseModel):
     title : str
     description : str
-    price : int
+    regularPrice : int
+    discountPrice : int
     quantity : int
-    sold : Optional[int] = Field(default=0)
-    colors : Optional[list[int]] = Field(default=None)
-    brandId : Optional[int] = Field(default=None)
-    categoryId : Optional[int] = Field(default=None)
+    brandId : int
+    categoryId : int
 
     @validator("title" , "description")
     def validateStrip(cls , value:str):
@@ -28,27 +34,19 @@ class addProduct(BaseModel):
             return value
         return value.lower()
     
-    @validator("colors")
-    def validateUniqueColor(cls , value:list[int]):
-        if value == None:
-            return None
-
-        return list(set(value))
-
-
 
 
 
 
 class updateProduct(BaseModel):
-    title : str | None
-    description : str | None
-    price : int | None
-    quantity : int | None
-    sold : Optional[int] = Field(default=0)
-    colors : Optional[list[int]] = Field(default=None)
-    brandId : Optional[int] = Field(default=None)
-    categoryId : Optional[int] = Field(default=None)
+    title : str
+    description : str
+    regularPrice : int
+    discountPrice : int
+    quantity : int
+    sold : int
+    brandId : int
+    categoryId : int
 
     @validator("title" , "description")
     def validateStrip(cls , value:str):
@@ -62,13 +60,6 @@ class updateProduct(BaseModel):
             return value
         return value.lower()
 
-    @validator("colors")
-    def validateUniqueColor(cls , value:list[int]):
-        if value == None:
-            return None
-
-        return list(set(value))
-
 
 
 
@@ -80,29 +71,55 @@ class returnImageInProduct(BaseModel):
     class config:
         from_attributes = True
         
-class returnColorInProduct(BaseModel):
-    id : int
-    name : str
 
 class returnProduct(BaseModel):
     id : int
     title : str
     slug : str
     description : str
-    price : int
+    regularPrice : int
+    discountPrice : int
     quantity : int
     sold : int | None
-    colors : list[returnColorInProduct]
-    ratings : list
-    brandName : str | None
-    categoryName : str | None
     createdAt : datetime
     updatedAt : datetime
-    ratings : list[returnRating]
-    avgRating : float
+    
     images : list[returnImageInProduct]
+
+    # ratings : list
+    # brandName : str | None
+    # categoryName : str | None
+    # ratings : list[returnRating]
+    # avgRating : float
 
     class config:
         from_attributes = True
 
 
+
+
+
+
+
+# class returnProduct2(BaseModel):
+#     id : int
+#     title : str
+#     slug : str
+#     description : str
+#     regularPrice : int
+#     discountPrice : int
+#     quantity : int
+#     sold : int | None
+#     createdAt : datetime
+#     updatedAt : datetime
+
+#     category: ProdCategory
+#     brand: Brand
+#     wishlists: List[Wishlist]
+#     ratings: List[Rating]
+#     images: List[ProductImage]
+#     cartItems: List[CartItem]
+#     orderItems: List[OrderItem]
+
+#     class config:
+#         from_attributes = True

@@ -12,7 +12,8 @@ class Rating(Base):
     productId = Column(Integer , ForeignKey("products.id"))
     star = Column(Integer , nullable=False)
     comment = Column(String)
-    created = Column(DateTime , default=datetime.utcnow)
+    createdAt = Column(DateTime , default=datetime.utcnow)
+    updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
     product = relationship("Product" , back_populates="ratings")
     user = relationship("User" , back_populates="ratings")

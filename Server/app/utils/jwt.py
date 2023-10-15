@@ -39,4 +39,7 @@ def verify_token(token : str):
     
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
+    
+    except:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="unknown error occured")
 # ------------------------------------------------------------------

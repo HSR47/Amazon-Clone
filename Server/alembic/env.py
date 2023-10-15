@@ -21,16 +21,18 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.models import Base
-from app.models import userModel
-from app.models import productModel
-from app.models import ratingModel
-from app.models import blogModel
-import app.models.likeDislikeModel
+import app.models.userModel
+import app.models.productModel
+import app.models.ratingModel
 import app.models.categoryModel
 import app.models.brandModel
 import app.models.wishlistModel
-import app.models.couponModel
-import app.models.colorModel
+import app.models.addressModel
+import app.models.orderModel
+import app.models.imageModel
+import app.models.cartModel
+import app.models.paymentModel
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

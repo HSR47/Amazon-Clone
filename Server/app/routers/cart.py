@@ -6,7 +6,6 @@ from app.database import getDb
 from sqlalchemy.orm.session import Session
 from app.models.brandModel import Brand
 from app.models.cartModel import CartItem
-from app.models.couponModel import Coupon
 from app.models.productModel import Product
 
 from app.models.userModel import User
@@ -33,7 +32,6 @@ def add_to_cart(id:int , data:addToCartRequest , curCust:User = Depends(get_curr
         userId = curCust.id,
         productId = id,
         count = data.count,
-        price = product.price
     )
 
     db.add(cartItem)
@@ -77,8 +75,7 @@ def update_cart(id:int , data:updateCartRequest , curCust:User = Depends(get_cur
     if cartItem == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="cart-item not found")
     
-    if data.count != None:
-        cartItem.count+=1
+    cartItem.count = data.count
     
     db.commit()
 
@@ -98,29 +95,3 @@ def clear_cart(curCust:User = Depends(get_current_customer) , db:Session = Depen
     return {"message" : "cleared"}
 # ------------------------------------------------------------------
 
-
-
-# ----------------------------APPLY COUPON-------------------------
-@cartRouter.get("/apply-coupon/{couponCode}")
-def apply_coupon(couponCode:str , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    coupon:Coupon = db.query(Coupon).filter(Coupon.name == couponCode).first()
-    if coupon == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="coupon not found")
-
-    curCust.couponId = coupon.id
-    db.commit()
-    
-    return {"message" : "applied"}
-# ------------------------------------------------------------------
-
-
-# ----------------------------REMOVE COUPON-------------------------
-@cartRouter.delete("/remove-coupon")
-def remove_coupon(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    curCust.couponId = None
-    db.commit()
-
-    return {"message" : "removed"}
-# ------------------------------------------------------------------
