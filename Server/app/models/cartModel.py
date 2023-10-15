@@ -2,7 +2,7 @@
 from sqlalchemy import Column, ForeignKey , Integer , DateTime, Uuid
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.models import Base
+from app.database import Base
 
 
 class CartItem(Base):

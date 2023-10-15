@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Enum, Float, ForeignKey , Integer , String , Boolean , DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.models import Base
+from app.database import Base
 from enum import Enum as pyEnum
 
 

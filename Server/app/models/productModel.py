@@ -2,7 +2,7 @@
 from sqlalchemy import Column, ForeignKey , Integer , String , Boolean , DateTime , event
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.models import Base
+from app.database import Base
 
 class Product(Base):
     __tablename__ = "products"
