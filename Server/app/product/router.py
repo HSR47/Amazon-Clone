@@ -3,14 +3,14 @@ from fastapi import APIRouter , Depends, File , HTTPException, Query, UploadFile
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.brandModel import Brand
-from app.models.categoryModel import ProdCategory
-from app.models.imageModel import ProductImage
-from app.models.productModel import Product
-from app.models.userModel import User
-from app.routers.auth import get_current_admin, get_current_user
+from app.brand.models import Brand
+from app.category.models import ProdCategory
+from app.image.models import ProductImage
+from app.product.models import Product
+from app.user.models import User
+from app.auth.dependencies import get_current_admin, get_current_user
 
-import app.schemas.productSchema as productSchema
+import app.product.schemas as productSchema
 
 from slugify import slugify
 

@@ -1,9 +1,9 @@
 from fastapi import APIRouter , HTTPException , status , Depends
-from app.models.addressModel import Address
-from app.models.userModel import User
-from app.routers.auth import get_current_customer
+from app.address.models import Address
+from app.user.models import User
+from app.auth.dependencies import get_current_customer
 
-from app.schemas.addressSchema import createAddress, returnAddress, updateAddress
+from app.address.schemas import createAddress, returnAddress, updateAddress
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session

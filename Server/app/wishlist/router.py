@@ -3,11 +3,11 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.productModel import Product
+from app.product.models import Product
 
-from app.models.userModel import User
-from app.models.wishlistModel import Wishlist
-from app.routers.auth import get_current_admin, get_current_customer, get_current_user
+from app.user.models import User
+from app.wishlist.models import Wishlist
+from app.auth.dependencies import get_current_admin, get_current_customer, get_current_user
 
 wishRouter = APIRouter(tags=["Wishlist"])
 

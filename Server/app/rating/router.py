@@ -3,12 +3,12 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.productModel import Product
-from app.models.ratingModel import Rating
+from app.product.models import Product
+from app.rating.models import Rating
 
-from app.models.userModel import User
-from app.routers.auth import get_current_customer
-import app.schemas.ratingSchema as ratingSchema
+from app.user.models import User
+from app.auth.dependencies import get_current_customer
+import app.rating.schemas as ratingSchema
 
 rateRouter = APIRouter(tags=["Rating"])
 

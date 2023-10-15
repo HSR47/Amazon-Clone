@@ -4,14 +4,14 @@ from httpx import delete
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.brandModel import Brand
-from app.models.cartModel import CartItem
-from app.models.productModel import Product
+from app.brand.models import Brand
+from app.cart.models import CartItem
+from app.product.models import Product
 
-from app.models.userModel import User
-from app.routers.auth import get_current_admin, get_current_customer, get_current_user
-import app.schemas.brandSchema as brandSchema
-from app.schemas.cartSchema import addToCartRequest, returnCartItem, updateCartRequest
+from app.user.models import User
+from app.auth.dependencies import get_current_admin, get_current_customer, get_current_user
+import app.brand.schemas as brandSchema
+from app.cart.schemas import addToCartRequest, returnCartItem, updateCartRequest
 
 cartRouter = APIRouter(tags=["Cart"])
 

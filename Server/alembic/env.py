@@ -21,17 +21,17 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.database import Base
-import app.models.userModel
-import app.models.productModel
-import app.models.ratingModel
-import app.models.categoryModel
-import app.models.brandModel
-import app.models.wishlistModel
-import app.models.addressModel
-import app.models.orderModel
-import app.models.imageModel
-import app.models.cartModel
-import app.models.paymentModel
+import app.user.models
+import app.product.models
+import app.rating.models
+import app.category.models
+import app.brand.models
+import app.wishlist.models
+import app.address.models
+import app.order.models
+import app.image.models
+import app.cart.models
+import app.payment.models
 
 target_metadata = Base.metadata
 

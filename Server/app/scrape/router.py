@@ -2,17 +2,17 @@
 from fastapi import APIRouter , Depends
 from slugify import slugify
 from app.utils.scrape import scrapeData
-from app.models.brandModel import Brand
-from app.models.categoryModel import ProdCategory
-from app.models.imageModel import ProductImage
-from app.models.productModel import Product
-from app.schemas.scrapeSchema import scrapeRequest
+from app.brand.models import Brand
+from app.category.models import ProdCategory
+from app.image.models import ProductImage
+from app.product.models import Product
+from app.scrape.schemas import scrapeRequest
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 
-from app.models.userModel import User
-from app.routers.auth import get_current_admin
+from app.user.models import User
+from app.auth.dependencies import get_current_admin
 
 scrapeRouter = APIRouter(tags=["Scrape"])
 

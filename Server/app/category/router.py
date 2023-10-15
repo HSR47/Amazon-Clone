@@ -3,11 +3,11 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.categoryModel import ProdCategory
+from app.category.models import ProdCategory
 
-from app.models.userModel import User
-from app.routers.auth import get_current_admin
-import app.schemas.categorySchema as categorySchema
+from app.user.models import User
+from app.auth.dependencies import get_current_admin
+import app.category.schemas as categorySchema
 
 prodCatRouter = APIRouter(tags=["Product Category"])
 

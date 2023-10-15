@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
-from app.schemas.productSchema import returnProduct
+from app.product.schemas import returnProduct
 
 class placeOrderRequest(BaseModel):
     method : str = Field(pattern=r"^(cod)$")

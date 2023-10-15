@@ -3,11 +3,11 @@ from fastapi import APIRouter , Depends , HTTPException , status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.models.brandModel import Brand
+from app.brand.models import Brand
 
-from app.models.userModel import User
-from app.routers.auth import get_current_admin, get_current_user
-import app.schemas.brandSchema as brandSchema
+from app.user.models import User
+from app.auth.dependencies import get_current_admin, get_current_user
+import app.brand.schemas as brandSchema
 
 brandRouter = APIRouter(tags=["Brand"])
 

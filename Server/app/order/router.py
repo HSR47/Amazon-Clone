@@ -5,13 +5,13 @@ from httpx import delete
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 
-from app.models.orderModel import Order, OrderItem
-from app.models.cartModel import CartItem
-from app.models.paymentModel import Payment
+from app.order.models import Order, OrderItem
+from app.cart.models import CartItem
+from app.payment.models import Payment
 
-from app.models.userModel import User
-from app.routers.auth import get_current_admin, get_current_customer, get_current_user
-from app.schemas.orderSchema import placeOrderRequest, returnOrder, updateOrderRequest
+from app.user.models import User
+from app.auth.dependencies import get_current_admin, get_current_customer, get_current_user
+from app.order.schemas import placeOrderRequest, returnOrder, updateOrderRequest
 
 orderRouter = APIRouter(tags=["Order"])
 

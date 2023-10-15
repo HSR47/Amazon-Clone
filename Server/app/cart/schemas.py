@@ -2,9 +2,9 @@
 from typing import Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
-from app.schemas.productSchema import returnProduct
+from app.product.schemas import returnProduct
 
-from app.schemas.ratingSchema import returnRating
+from app.rating.schemas import returnRating
 
 
 class addToCartRequest(BaseModel):

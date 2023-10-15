@@ -2,16 +2,6 @@
 from typing import List, Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
-from app.models.brandModel import Brand
-from app.models.cartModel import CartItem
-from app.models.categoryModel import ProdCategory
-from app.models.imageModel import ProductImage
-from app.models.orderModel import OrderItem
-from app.models.ratingModel import Rating
-from app.models.wishlistModel import Wishlist
-
-from app.schemas.ratingSchema import returnRating
-
 
 class addProduct(BaseModel):
     title : str
