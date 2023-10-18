@@ -1,49 +1,28 @@
 
 from typing import Optional
-from pydantic import BaseModel , EmailStr , Field, validator
+from pydantic import BaseModel
 from datetime import datetime
 
 
-class addCategoryRequest(BaseModel):
+class CategoryCreate(BaseModel):
     name : str
-    image : str | None
-
-    @validator("name")
-    def validateStrip(cls , value:str):
-        if value == None:
-            return value
-        return value.strip()
-
-    @validator("name")
-    def validateLowerCase(cls , value:str):
-        if value == None:
-            return value
-        return value.lower()
+    image : str
 
 
-class returnCategory(BaseModel):
+class CategoryInDB(CategoryCreate):
     id : int
-    name : str
-    image : str | None
     createdAt : datetime
     updatedAt : datetime
 
-    class Config():
+
+class CategoryReturn(CategoryInDB):
+    pass
+
+    class Config:
         form_attributes = True
 
 
-class updateCategoryRequest(BaseModel):
-    name : str
-    image : str | None
+class CategoryUpdate(BaseModel):
+    name : Optional[str] = None
+    image : Optional[str] = None
 
-    @validator("name")
-    def validateStrip(cls , value:str):
-        if value == None:
-            return value
-        return value.strip()
-
-    @validator("name")
-    def validateLowerCase(cls , value:str):
-        if value == None:
-            return value
-        return value.lower()

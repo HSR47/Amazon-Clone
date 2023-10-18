@@ -1,84 +1,91 @@
 
+from typing import Annotated
 from fastapi import APIRouter , Depends , HTTPException , status
-
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.category.models import ProdCategory
 
-from app.user.models import User
-from app.auth.dependencies import get_current_admin
-import app.category.schemas as categorySchema
+import app.category.models as catModel
+import app.category.crud as catCrud
+import app.category.schemas as catSchema
+import app.category.dependecies as catDep
+import app.user.models as userModel
+import app.auth.dependencies as authDep
 
 prodCatRouter = APIRouter(tags=["Product Category"])
 
 
 # ----------------------------ADD PRODUCT CATEGORY-------------------------
-@prodCatRouter.post("/category/product" , response_model=categorySchema.returnCategory)
-def add_Product_Category(data:categorySchema.addCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-
-    check = db.query(ProdCategory).filter(ProdCategory.name == data.name).first()
-    if check != None:
+@prodCatRouter.post("/category" , response_model=catSchema.CategoryReturn)
+def add_product_category(
+    *,
+    data:catSchema.CategoryCreate,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    checkCategory = catCrud.get_category_by_name(db , data.name)
+    if checkCategory != None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="category already exists")
 
-    category = ProdCategory(
-        name = data.name,
-        image = data.image
-    )
-    db.add(category)
-    db.commit()
-    db.refresh(category)
+    newCategory = catCrud.create_category(db , data)
 
-    return category
+    return newCategory
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET ALL PRODUCT CATEGORY-------------------------
-@prodCatRouter.get("/category/product" , response_model=list[categorySchema.returnCategory])
-def get_All_Product_Category(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    allCategory = db.query(ProdCategory).all()
+@prodCatRouter.get("/category" , response_model=list[catSchema.CategoryReturn])
+def get_all_product_category(
+    *,
+    offset:int = 0,
+    limit:int = 100,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    allCategory = catCrud.get_all_categories(db , offset , limit)
     return allCategory
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET SPECIFIC PRODUCT CATEGORY-------------------------
-@prodCatRouter.get("/category/product/{id}" , response_model=categorySchema.returnCategory)
-def get_Specific_Product_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    category = db.query(ProdCategory).filter(ProdCategory.id == id).first()
-    if category == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
-    
+@prodCatRouter.get("/category/{id}" , response_model=catSchema.CategoryReturn)
+def get_specific_product_category(
+    *,
+    category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)],
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+):
     return category
 # ------------------------------------------------------------------
 
 
 # ----------------------------UPDATE PRODUCT CATEGORY-------------------------
-@prodCatRouter.patch("/category/product/{id}" , response_model=categorySchema.returnCategory)
-def update_Product_Category(id:int , data:categorySchema.updateCategoryRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-
-    category:ProdCategory = db.query(ProdCategory).filter(ProdCategory.id == id).first()
-    if category == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
-
-    category.name = data.name
-    category.image = data.image
-
-    db.commit()
-    db.refresh(category)
+@prodCatRouter.patch("/category/{id}" , response_model=catSchema.CategoryReturn)
+def update_Product_Category(
+    *,
+    category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)],
+    data:catSchema.CategoryUpdate,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if data.name != None and data.name != category.name:
+        checkCategory = catCrud.get_category_by_name(db , data.name)
+        if checkCategory != None:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="category already exists")
     
-    return category
+    newCategory = catCrud.update_category(db , category , data)
+    
+    return newCategory
 # ------------------------------------------------------------------
 
 
 # ----------------------------DELETE PRODUCT CATEGORY-------------------------
-@prodCatRouter.delete("/category/product/{id}")
-def delete_Product_Category(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-
-    category:ProdCategory = db.query(ProdCategory).filter(ProdCategory.id == id).first()
-    if category == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="category not found")
-
-    db.delete(category)
-    db.commit()
+@prodCatRouter.delete("/category/{id}")
+def delete_Product_Category(
+    *, 
+    category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)], 
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    catCrud.delete_category(db , category)
     
     return {"message" : "deleted"}
 # ------------------------------------------------------------------
