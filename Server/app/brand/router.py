@@ -1,84 +1,92 @@
 
+from typing import Annotated
 from fastapi import APIRouter , Depends , HTTPException , status
-
 from app.database import getDb
 from sqlalchemy.orm.session import Session
-from app.brand.models import Brand
 
-from app.user.models import User
-from app.auth.dependencies import get_current_admin, get_current_user
+import app.brand.models as brandModel
 import app.brand.schemas as brandSchema
+import app.brand.crud as brandCrud
+import app.brand.dependecies as brandDep
+import app.user.models as userModel
+import app.auth.dependencies as authDep
+
 
 brandRouter = APIRouter(tags=["Brand"])
 
 
 # ----------------------------ADD BRAND-------------------------
-@brandRouter.post("/brand" , response_model=brandSchema.returnBrand)
-def add_Brand(data:brandSchema.addBrandRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-
-    check = db.query(Brand).filter(Brand.name == data.name).first()
-    if check != None:
+@brandRouter.post("/brand" , response_model=brandSchema.BrandReturn)
+def add_Brand(
+    *,
+    data:brandSchema.BrandCreate,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    checkBrand = brandCrud.get_brand_by_name(db , data.name)
+    if checkBrand != None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="brand already exists")
 
-    brand = Brand(
-        name = data.name,
-        image = data.image
-    )
-    db.add(brand)
-    db.commit()
-    db.refresh(brand)
+    newBrand = brandCrud.create_brand(db , data)
 
-    return brand
+    return newBrand
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET ALL BRAND-------------------------
-@brandRouter.get("/brand" , response_model=list[brandSchema.returnBrand])
-def get_All_Brand(curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    allBrands = db.query(Brand).all()
+@brandRouter.get("/brand" , response_model=list[brandSchema.BrandReturn])
+def get_all_brand(
+    *,
+    offset:int = 0,
+    limit:int = 100,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    allBrands = brandCrud.get_all_brands(db , offset , limit)
     return allBrands
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET SPECIFIC BRAND-------------------------
-@brandRouter.get("/brand/{id}" , response_model=brandSchema.returnBrand)
-def get_Specific_Brand(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    brand = db.query(Brand).filter(Brand.id == id).first()
-    if brand == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
-    
+@brandRouter.get("/brand/{id}" , response_model=brandSchema.BrandReturn)
+def get_specific_brand(
+    *,
+    brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)],
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+):
     return brand
 # ------------------------------------------------------------------
 
 
 # ----------------------------UPDATE BRAND-------------------------
-@brandRouter.put("/brand/{id}" , response_model=brandSchema.returnBrand)
-def update_Brand(id:int , data:brandSchema.updateBrandRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
+@brandRouter.put("/brand/{id}" , response_model=brandSchema.BrandReturn)
+def update_Brand(
+    *,
+    brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)],
+    data:brandSchema.BrandUpdate,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if data.name != None and data.name != brand.name:
+        checkBrand = brandCrud.get_brand_by_name(db , data.name)
+        if checkBrand != None:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="brand already exists")
+        
+    newBrand = brandCrud.update_brand(db , brand , data)
 
-    brand:Brand = db.query(Brand).filter(Brand.id == id).first()
-    if brand == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
-
-    brand.name = data.name
-    brand.image = data.image
-
-    db.commit()
-    db.refresh(brand)
-
-    return brand
+    return newBrand
 # ------------------------------------------------------------------
 
 
 # ----------------------------DELETE BRAND-------------------------
 @brandRouter.delete("/brand/{id}")
-def delete_Brand(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-
-    brand:Brand = db.query(Brand).filter(Brand.id == id).first()
-    if brand == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")
-
-    db.delete(brand)
-    db.commit()
+def delete_Brand(
+    *,
+    brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)], 
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    brandCrud.delete_brand(db , brand)
     
     return {"message" : "deleted"}
 # ------------------------------------------------------------------

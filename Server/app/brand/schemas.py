@@ -1,49 +1,27 @@
 
 from typing import Optional
-from pydantic import BaseModel , EmailStr , Field, validator
+from pydantic import BaseModel
 from datetime import datetime
 
 
-class addBrandRequest(BaseModel):
+class BrandCreate(BaseModel):
     name : str
-    image : str | None
-
-    @validator("name")
-    def validateStrip(cls , value:str):
-        if value == None:
-            return value
-        return value.strip()
-
-    @validator("name")
-    def validateLowerCase(cls , value:str):
-        if value == None:
-            return value
-        return value.lower()
+    image : str
 
 
-class returnBrand(BaseModel):
+class BrandInDB(BrandCreate):
     id : int
-    name : str
-    image : str | None
     createdAt : datetime
     updatedAt : datetime
 
-    class Config():
+
+class BrandReturn(BrandInDB):
+    pass
+
+    class Config:
         form_attributes = True
 
 
-class updateBrandRequest(BaseModel):
-    name : str
-    image : str | None
-
-    @validator("name")
-    def validateStrip(cls , value:str):
-        if value == None:
-            return value
-        return value.strip()
-
-    @validator("name")
-    def validateLowerCase(cls , value:str):
-        if value == None:
-            return value
-        return value.lower()
+class BrandUpdate(BaseModel):
+    name : Optional[str] = None
+    image : Optional[str] = None
