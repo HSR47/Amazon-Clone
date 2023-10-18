@@ -23,14 +23,14 @@ def get_all_users(db:Session , offset:int = 0 , limit:int = 100):
 
 
 # ----------------------------CREATE-------------------------
-def create_user(db:Session , data:schemas.UserIn):
+def create_user(db:Session , data:schemas.UserCreate):
     newUser = models.User(
         email = data.email,
-        password = passlib.hashPassword(data.password),
+        hashed_password = passlib.hashPassword(data.password),
         fname = data.fname,
         lname = data.lname,
         mobile = data.mobile,
-        isAdmin = data.isAdmin
+        is_admin = data.is_admin
     )
 
     db.add(newUser)
@@ -42,7 +42,7 @@ def create_user(db:Session , data:schemas.UserIn):
 
 
 # ----------------------------UPDATE-------------------------
-def update_user(db:Session , user:models.User , data:schemas.UserPatch):
+def update_user(db:Session , user:models.User , data:schemas.UserUpdate):
     if data.fname != None:
         user.fname = data.fname
     
@@ -55,11 +55,11 @@ def update_user(db:Session , user:models.User , data:schemas.UserPatch):
     if data.email != None:
         user.email = data.email
     
-    if data.isAdmin != None:
-        user.isAdmin = data.isAdmin
+    if data.is_admin != None:
+        user.is_admin = data.is_admin
     
     if data.password != None:
-        user.password = passlib.hashPassword(data.password)
+        user.hashed_password = passlib.hashPassword(data.password)
 
     db.commit()
     db.refresh(user)

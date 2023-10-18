@@ -9,17 +9,17 @@ class User(Base):
 
     id = Column(Integer , primary_key=True)
     email = Column(String , nullable=False , unique=True)
-    password = Column(String , nullable=False)
+    hashed_password = Column(String , nullable=False)
     fname = Column(String , nullable=False)
     lname = Column(String , nullable=False)
     mobile = Column(String , nullable=False , unique=True)
-    isAdmin = Column(Boolean , nullable=False)
+    is_admin = Column(Boolean , nullable=False)
 
-    refreshToken = Column(String)
-    passResetToken = Column(String)
-    passResetTokenExp = Column(DateTime)
-    createdAt = Column(DateTime , nullable=False , default=datetime.utcnow)
-    updatedAt = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
+    refresh_token = Column(String)
+    pass_reset_token = Column(String)
+    pass_reset_token_exp = Column(DateTime)
+    created_at = Column(DateTime , nullable=False , default=datetime.utcnow)
+    updated_at = Column(DateTime , default=datetime.utcnow , onupdate=datetime.utcnow)
 
 
     address = relationship("Address" , back_populates="user" , cascade="all, delete")

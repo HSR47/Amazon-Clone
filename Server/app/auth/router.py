@@ -25,13 +25,13 @@ def login(data:authSchema.loginUser , db:Session = Depends(getDb)):
     
     user:User = db.query(User).filter(User.email == data.email).first()
 
-    if (user==None)  or  (not verifyPassword(data.password , user.password)):
+    if (user==None)  or  (not verifyPassword(data.password , user.hashed_password)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
 
     accessToken = create_access_token({"id" : user.id})
     refreshToken = create_refresh_token({"id" : user.id})
 
-    user.refreshToken = refreshToken
+    user.refresh_token = refreshToken
     db.commit()
 
     response = JSONResponse(content={
@@ -56,7 +56,7 @@ def refresh_access_token(req:Request , db:Session = Depends(getDb)):
     userId = payload["id"]
 
     user:User = db.query(User).filter(User.id == userId).first()
-    if user==None or user.refreshToken!=refreshToken:
+    if user==None or user.refresh_token!=refreshToken:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
     
     accessToken = create_access_token({"id" : user.id})
@@ -72,7 +72,7 @@ def refresh_access_token(req:Request , db:Session = Depends(getDb)):
 @authRouter.get("/logout")
 def logout_User(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
-    curUser.refreshToken = None
+    curUser.refresh_token = None
     db.commit()
 
     res = JSONResponse(content={
@@ -87,7 +87,7 @@ def logout_User(curUser:User = Depends(get_current_user) , db:Session = Depends(
 # ----------------------------CHANGE PASSWORD-------------------------
 @authRouter.put("/password")
 def change_Password(data:authSchema.changePassword , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
-    curUser.password = hashPassword(data.password)
+    curUser.hashed_password = hashPassword(data.password)
     db.commit()
     db.refresh(curUser)
 
@@ -105,8 +105,8 @@ def generate_Pass_Reset_Token(bgtask:BackgroundTasks , data:authSchema.forgotPas
     passResetToken = token_urlsafe(32)
     passResetTokenExp = datetime.utcnow() + timedelta(minutes=settings.PASS_RESET_TOKEN_EXP_MINUTES)
 
-    user.passResetToken = passResetToken
-    user.passResetTokenExp = passResetTokenExp
+    user.pass_reset_token = passResetToken
+    user.pass_reset_token_exp = passResetTokenExp
     db.commit()
 
     bgtask.add_task(sendPassResetToken , data.email , passResetToken)
@@ -130,16 +130,16 @@ def reset_Password(secret:str , data:authSchema.resetPassRequest , db:Session = 
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="user not found")
 
-    if user.passResetToken != secret:
+    if user.pass_reset_token != secret:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE , detail="invalid password reset token")
     
-    if datetime.utcnow() > user.passResetTokenExp:
+    if datetime.utcnow() > user.pass_reset_token_exp:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE , detail="password reset token expired")
     
-    user.password = hashPassword(data.password)
-    user.passResetToken = None
-    user.passResetTokenExp = None
-    user.refreshToken = None
+    user.hashed_password = hashPassword(data.password)
+    user.pass_reset_token = None
+    user.pass_reset_token_exp = None
+    user.refresh_token = None
     db.commit()
 
     return {"message" : "password reset"}

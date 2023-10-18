@@ -1,35 +1,42 @@
 
 from typing import Optional
-from pydantic import BaseModel , EmailStr , constr
+from pydantic import BaseModel , EmailStr, Field , constr
 from datetime import datetime
-
 
 class UserBase(BaseModel):
     fname : constr(pattern=r"^[A-Za-z]+$" , to_lower=True)
     lname : constr(pattern=r"^[A-Za-z]+$" , to_lower=True)
     mobile : constr(pattern=r"^[0-9]{10}$")
     email : EmailStr
-    isAdmin : bool
+    is_admin : bool
 
 
-class UserIn(UserBase):
+
+class UserCreate(UserBase):
     password : constr(pattern=r"^.{6,20}$")
 
 
-class UserOut(UserBase):
+
+class UserInDB(UserBase):
     id : int
-    createdAt : datetime
-    updatedAt : datetime
+    hashed_password : str
+    created_at : datetime
+    updated_at : datetime
+
+
+
+class UserReturn(UserInDB):
+    hashed_password:str = Field(exclude=True)
 
     class Config:
         from_attributes = True
 
 
-class UserPatch(UserBase):
+class UserUpdate(BaseModel):
     fname : Optional[constr(pattern=r"^[A-Za-z]+$" , to_lower=True)] = None
     lname : Optional[constr(pattern=r"^[A-Za-z]+$" , to_lower=True)] = None
     mobile : Optional[constr(pattern=r"^[0-9]{10}$")] = None
     email : Optional[EmailStr] = None
-    isAdmin : Optional[bool] = None
+    is_admin : Optional[bool] = None
     password : Optional[constr(pattern=r"^.{6,20}$")] = None
 

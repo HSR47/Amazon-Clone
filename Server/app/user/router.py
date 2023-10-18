@@ -16,10 +16,10 @@ userRouter = APIRouter(tags=["User"])
 
 
 # ----------------------------CREATE USER (ANY)-------------------------
-@userRouter.post("/user" , response_model=userSchema.UserOut)
+@userRouter.post("/user" , response_model=userSchema.UserReturn)
 def register_user(
     *,
-    data:userSchema.UserIn,
+    data:userSchema.UserCreate,
     db:Annotated[Session , Depends(getDb)]
 ):
     checkEmail = userCrud.get_user_by_email(db , data.email)
@@ -36,7 +36,7 @@ def register_user(
 
 
 # ----------------------------GET ALL USERS (ADMIN)-------------------------
-@userRouter.get("/user" , response_model=list[userSchema.UserOut])
+@userRouter.get("/user" , response_model=list[userSchema.UserReturn])
 def get_all_users(
     *,
     offset:int=0,
@@ -50,7 +50,7 @@ def get_all_users(
 
 
 # ----------------------------GET MY DETAILS (BOTH)-------------------------
-@userRouter.get("/user/me", response_model=userSchema.UserOut)
+@userRouter.get("/user/me", response_model=userSchema.UserReturn)
 def get_my_details(
     *,
     curUser:Annotated[userModel.User , Depends(authDep.get_current_user)]
@@ -60,7 +60,7 @@ def get_my_details(
 
 
 # ----------------------------GET SPECIFIC USER (ADMIN)-------------------------
-@userRouter.get("/user/{id}" , response_model=userSchema.UserOut)
+@userRouter.get("/user/{id}" , response_model=userSchema.UserReturn)
 def get_specific_user(
     *,
     user:Annotated[userModel.User , Depends(userDep.valid_user_id)],
@@ -85,10 +85,10 @@ def delete_specific_user(
 
 
 # ----------------------------UPDATE MY DETAILS (BOTH)-------------------------
-@userRouter.patch("/user/me" , response_model=userSchema.UserOut)
+@userRouter.patch("/user/me" , response_model=userSchema.UserReturn)
 def update_my_details(
     *,
-    data:userSchema.UserPatch,
+    data:userSchema.UserUpdate,
     curUser:Annotated[userModel.User , Depends(authDep.get_current_user)],
     db:Annotated[Session , Depends(getDb)]
 ):
@@ -108,11 +108,11 @@ def update_my_details(
 
 
 # ----------------------------UPDATE SPECIFIC USER (ADMIN)-------------------------
-@userRouter.patch("/user/{id}" , response_model=userSchema.UserOut)
+@userRouter.patch("/user/{id}" , response_model=userSchema.UserReturn)
 def update_specific_user(
     *,
     user:Annotated[userModel.User , Depends(userDep.valid_user_id)],
-    data:userSchema.UserPatch,
+    data:userSchema.UserUpdate,
     curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
     db:Annotated[Session , Depends(getDb)]
 ):  

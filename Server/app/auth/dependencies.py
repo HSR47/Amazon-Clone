@@ -27,7 +27,7 @@ def get_current_user(token:str = Depends(oauth2_scheme) , db:Session = Depends(g
 # ----------------------------GET CURRENT CUSTOMER-------------------------
 def get_current_customer(user:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
-    if user.isAdmin:
+    if user.is_admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="not authorized")
 
     return user
@@ -37,7 +37,7 @@ def get_current_customer(user:User = Depends(get_current_user) , db:Session = De
 # ----------------------------GET CURRENT ADMIN-------------------------
 def get_current_admin(user:User = Depends(get_current_user) , db:Session = Depends(getDb)):
 
-    if not user.isAdmin:
+    if not user.is_admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="not authorized")
 
     return user
