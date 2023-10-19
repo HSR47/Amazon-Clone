@@ -1,97 +1,98 @@
 
+from typing import Annotated
 from fastapi import APIRouter , Depends , HTTPException , status
-from httpx import delete
-
 from app.database import getDb
-from sqlalchemy.orm.session import Session
-from app.brand.models import Brand
-from app.cart.models import CartItem
-from app.product.models import Product
+from sqlalchemy.orm import Session
 
-from app.user.models import User
-from app.auth.dependencies import get_current_admin, get_current_customer, get_current_user
-import app.brand.schemas as brandSchema
-from app.cart.schemas import addToCartRequest, returnCartItem, updateCartRequest
+
+import app.cart.models as cartModel
+import app.cart.schemas as cartSchema
+import app.cart.crud as cartCrud
+import app.user.models as userModel
+import app.auth.dependencies as authDep
+import app.user.dependencies as userDep
+import app.cart.dependecies as cartDep
+import app.product.models as prodModel
+import app.product.dependencies as prodDep
+
 
 cartRouter = APIRouter(tags=["Cart"])
 
 
 # ----------------------------ADD TO CART-------------------------
-@cartRouter.post("/cart/{id}")
-def add_to_cart(id:int , data:addToCartRequest , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-    
-    product:Product = db.query(Product).filter(Product.id == id).first()
-    if product == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
-    
-    check:CartItem = db.query(CartItem).filter((CartItem.userId==curCust.id) & (CartItem.productId==id)).first()
-    if check != None:
+@cartRouter.post("/user/me/product/{product_id}/cart", response_model=cartSchema.CartReturn)
+def add_to_cart(
+    *,
+    product:Annotated[prodModel.Product , Depends(prodDep.valid_product_id)],
+    data:cartSchema.CartCreate,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    checkCartItem = cartCrud.get_cart_item_by_product_id_and_user_id(db , product.id , curCust.id)
+    if checkCartItem != None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="product already added")
-    
-    cartItem = CartItem(
-        userId = curCust.id,
-        productId = id,
-        count = data.count,
-    )
 
-    db.add(cartItem)
-    db.commit()
-    db.refresh(cartItem)
-
-    return {"message" : "added"}
+    cartItem = cartCrud.create_cart_item(db , curCust.id , product.id , data)
+    return cartItem
 # ------------------------------------------------------------------
 
 
 # ----------------------------REMOVE FROM CART-------------------------
-@cartRouter.delete("/cart/{id}")
-def remove_from_cart(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-    
-    cartItem:CartItem = db.query(CartItem).filter(CartItem.id == id).first()
-    if cartItem == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="cart-item not found")
-    
-    db.delete(cartItem)
-    db.commit()
+@cartRouter.delete("/user/me/cart/{cart_item_id}")
+def remove_from_cart(
+    *,
+    cartItem:Annotated[cartModel.CartItem , Depends(cartDep.valid_cart_item_id)],
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if cartItem.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
 
+    cartCrud.delete_cart_item(db , cartItem)
     return {"message" : "removed"}
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET CART-------------------------
-@cartRouter.get("/cart" , response_model=list[returnCartItem])
-def get_cart(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    allItems = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
-    
-    return allItems
+@cartRouter.get("/user/me/cart" , response_model=list[cartSchema.CartReturn])
+def get_cart(
+    *,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    allCartItems = cartCrud.get_all_cart_items_by_user_id(db , curCust.id)
+    return allCartItems
 # ------------------------------------------------------------------
 
 
 # ----------------------------UPDATE CART ITEM-------------------------
-@cartRouter.patch("/cart/{id}")
-def update_cart(id:int , data:updateCartRequest , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    cartItem:CartItem = db.query(CartItem).filter(CartItem.id == id).first()
-    if cartItem == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="cart-item not found")
+@cartRouter.patch("/user/me/cart/{cart_item_id}" , response_model=cartSchema.CartReturn)
+def update_cart_item(
+    *,
+    cartItem:Annotated[cartModel.CartItem , Depends(cartDep.valid_cart_item_id)],
+    data:cartSchema.CartUpdate,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if cartItem.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
-    cartItem.count = data.count
-    
-    db.commit()
-
-    return {"message" : "updated"}
+    cartItem = cartCrud.update_cart_item(db , cartItem , data)
+    return cartItem
 # ------------------------------------------------------------------
 
 
 # ----------------------------CLEAR CART-------------------------
-@cartRouter.delete("/clear-cart")
-def clear_cart(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+@cartRouter.delete("/user/me/cart")
+def clear_cart(
+    *,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):    
+    allCartItems = cartCrud.get_all_cart_items_by_user_id(db , curCust.id)
+    for cartItem in allCartItems:
+        cartCrud.delete_cart_item(db , cartItem)
     
-    allCartItems = db.query(CartItem).filter(CartItem.userId == curCust.id).all()
-    for i in allCartItems:
-        db.delete(i)
-    db.commit()
-
     return {"message" : "cleared"}
 # ------------------------------------------------------------------
 

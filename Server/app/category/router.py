@@ -47,7 +47,7 @@ def get_all_product_category(
 
 
 # ----------------------------GET SPECIFIC PRODUCT CATEGORY-------------------------
-@prodCatRouter.get("/category/{id}" , response_model=catSchema.CategoryReturn)
+@prodCatRouter.get("/category/{category_id}" , response_model=catSchema.CategoryReturn)
 def get_specific_product_category(
     *,
     category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)],
@@ -58,7 +58,7 @@ def get_specific_product_category(
 
 
 # ----------------------------UPDATE PRODUCT CATEGORY-------------------------
-@prodCatRouter.patch("/category/{id}" , response_model=catSchema.CategoryReturn)
+@prodCatRouter.patch("/category/{category_id}" , response_model=catSchema.CategoryReturn)
 def update_Product_Category(
     *,
     category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)],
@@ -78,7 +78,7 @@ def update_Product_Category(
 
 
 # ----------------------------DELETE PRODUCT CATEGORY-------------------------
-@prodCatRouter.delete("/category/{id}")
+@prodCatRouter.delete("/category/{category_id}")
 def delete_Product_Category(
     *, 
     category:Annotated[catModel.ProdCategory , Depends(catDep.valid_category_id)], 

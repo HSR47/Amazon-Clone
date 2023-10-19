@@ -9,8 +9,8 @@ import app.brand.crud as brandCrud
 import app.brand.models as brandModel
 
 
-def valid_brand_id(id:int , db:Annotated[Session , Depends(getDb)]):
-    brand:brandModel.Brand = brandCrud.get_brand_by_id(db , id)
+def valid_brand_id(brand_id:int , db:Annotated[Session , Depends(getDb)]):
+    brand:brandModel.Brand = brandCrud.get_brand_by_id(db , brand_id)
     
     if brand == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="brand not found")

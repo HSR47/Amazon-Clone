@@ -60,7 +60,7 @@ def get_my_details(
 
 
 # ----------------------------GET SPECIFIC USER (ADMIN)-------------------------
-@userRouter.get("/user/{id}" , response_model=userSchema.UserReturn)
+@userRouter.get("/user/{user_id}" , response_model=userSchema.UserReturn)
 def get_specific_user(
     *,
     user:Annotated[userModel.User , Depends(userDep.valid_user_id)],
@@ -71,7 +71,7 @@ def get_specific_user(
 
 
 # ----------------------------DELETE USER (ADMIN)-------------------------
-@userRouter.delete("/user/{id}")
+@userRouter.delete("/user/{user_id}")
 def delete_specific_user(
     *,
     user:Annotated[userModel.User , Depends(userDep.valid_user_id)],
@@ -108,7 +108,7 @@ def update_my_details(
 
 
 # ----------------------------UPDATE SPECIFIC USER (ADMIN)-------------------------
-@userRouter.patch("/user/{id}" , response_model=userSchema.UserReturn)
+@userRouter.patch("/user/{user_id}" , response_model=userSchema.UserReturn)
 def update_specific_user(
     *,
     user:Annotated[userModel.User , Depends(userDep.valid_user_id)],

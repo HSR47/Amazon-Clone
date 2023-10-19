@@ -48,7 +48,7 @@ def get_all_brand(
 
 
 # ----------------------------GET SPECIFIC BRAND-------------------------
-@brandRouter.get("/brand/{id}" , response_model=brandSchema.BrandReturn)
+@brandRouter.get("/brand/{brand_id}" , response_model=brandSchema.BrandReturn)
 def get_specific_brand(
     *,
     brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)],
@@ -59,7 +59,7 @@ def get_specific_brand(
 
 
 # ----------------------------UPDATE BRAND-------------------------
-@brandRouter.put("/brand/{id}" , response_model=brandSchema.BrandReturn)
+@brandRouter.put("/brand/{brand_id}" , response_model=brandSchema.BrandReturn)
 def update_Brand(
     *,
     brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)],
@@ -79,7 +79,7 @@ def update_Brand(
 
 
 # ----------------------------DELETE BRAND-------------------------
-@brandRouter.delete("/brand/{id}")
+@brandRouter.delete("/brand/{brand_id}")
 def delete_Brand(
     *,
     brand:Annotated[brandModel.Brand , Depends(brandDep.valid_brand_id)], 

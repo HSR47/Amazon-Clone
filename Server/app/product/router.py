@@ -97,7 +97,7 @@ def get_All_Products(
 
 
 # ----------------------------GET SPECIFIC PRODUCTS-------------------------
-@prodRouter.get("/product/{id}" , response_model=prodSchema.ProductReturn)
+@prodRouter.get("/product/{product_id}" , response_model=prodSchema.ProductReturn)
 def get_Specific_Product(
     *,
     product:Annotated[prodModel.Product , Depends(prodDep.valid_product_id)],
@@ -107,7 +107,7 @@ def get_Specific_Product(
 
 
 # ----------------------------UPDATE PRODUCT-------------------------
-@prodRouter.patch("/product/{id}")
+@prodRouter.patch("/product/{product_id}")
 def update_Product(
     *,
     product:Annotated[prodModel.Product , Depends(prodDep.valid_product_id)],
@@ -138,7 +138,7 @@ def update_Product(
 
 
 # ----------------------------DELETE PRODUCT-------------------------
-@prodRouter.delete("/product/{id}")
+@prodRouter.delete("/product/{product_id}")
 def delete_product(
     *,
     product:Annotated[prodModel.Product , Depends(prodDep.valid_product_id)],
