@@ -4,6 +4,7 @@ from app.auth.router import authRouter
 from app.user.router import userRouter
 from app.scrape.router import scrapeRouter
 from app.product.router import prodRouter
+from app.image.router import imageRouter
 from app.category.router import prodCatRouter
 from app.brand.router import brandRouter
 from app.wishlist.router import wishRouter
@@ -18,6 +19,7 @@ app = FastAPI()
 app.include_router(authRouter)
 app.include_router(userRouter)
 app.include_router(prodRouter)
+app.include_router(imageRouter)
 app.include_router(brandRouter)
 app.include_router(prodCatRouter)
 app.include_router(wishRouter)
