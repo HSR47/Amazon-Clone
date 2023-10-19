@@ -1,92 +1,89 @@
+from typing import Annotated
 from fastapi import APIRouter , HTTPException , status , Depends
 from app.address.models import Address
-from app.user.models import User
-from app.auth.dependencies import get_current_customer
-
-from app.address.schemas import createAddress, returnAddress, updateAddress
-
 from app.database import getDb
+
+import app.address.models as addressModel
+import app.address.schemas as addressSchema
+import app.address.crud as addressCrud
+import app.user.models as userModel
+import app.auth.dependencies as authDep
+import app.user.dependencies as userDep
+import app.address.dependecies as addressDep
+
 from sqlalchemy.orm.session import Session
 
 addressRouter = APIRouter(tags=["Address"])
 
 
 # ----------------------------CREATE ADDRESS-------------------------
-@addressRouter.post("/address")
-def create_address(data:createAddress , curCust:User = Depends(get_current_customer) , db:Session =  Depends(getDb)):
-
-    address = Address(
-        userId = curCust.id,
-        addressLine1 = data.addressLine1,
-        addressLine2 = data.addressLine2,
-        postalCode = data.postalCode,
-        country = data.country,
-        state = data.state,
-        city = data.city,
-        mobile = data.mobile
-    )
-
-    db.add(address)
-    db.commit()
-
-    return {"message" : "created"}
+@addressRouter.post("/user/me/address" , response_model=addressSchema.AddressReturn)
+def create_address(
+    *,
+    data:addressSchema.AddressCreate,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    newAddress = addressCrud.create_address(db , curCust.id , data)
+    return newAddress
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET ALL ADDRESS-------------------------
-@addressRouter.get("/address" , response_model=list[returnAddress])
-def get_all_address(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    allAddresses = db.query(Address).filter(Address.userId == curCust.id).all()
-    return allAddresses
+@addressRouter.get("/user/me/address" , response_model=list[addressSchema.AddressReturn])
+def get_all_address(
+    *,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    allCustAddress = addressCrud.get_all_address_by_user_id(db , curCust.id)
+    return allCustAddress
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET SPECIFIC ADDRESS-------------------------
-@addressRouter.get("/address/{id}" , response_model=returnAddress)
-def get_specific_address(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-    
-    address = db.query(Address).filter((Address.id == id) & (Address.userId == curCust.id)).first()
-    if address == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="address not found")
-    
+@addressRouter.get("/user/me/address/{address_id}" , response_model=addressSchema.AddressReturn)
+def get_specific_address(
+    *,
+    address:Annotated[addressModel.Address , Depends(addressDep.valid_address_id)],
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+):
+    if address.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
+
     return address
 # ------------------------------------------------------------------
 
 
 # ----------------------------UPDATE ADDRESS-------------------------
-@addressRouter.put("/address/{id}" , response_model=returnAddress)
-def update_address(id:int , data:updateAddress , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+@addressRouter.put("/user/me/address/{address_id}" , response_model=addressSchema.AddressReturn)
+def update_address(
+    *,
+    address:Annotated[addressModel.Address , Depends(addressDep.valid_address_id)],
+    data:addressSchema.AddressUpdate,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if address.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
 
-    address = db.query(Address).filter((Address.id == id) & (Address.userId == curCust.id)).first()
-    if address == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="address not found")
-    
-    address.addressLine1 = data.addressLine1
-    address.addressLine2 = data.addressLine2
-    address.postalCode = data.postalCode
-    address.country = data.country
-    address.state = data.state
-    address.city = data.city
-    address.mobile = data.mobile
-
-    db.commit()
-    db.refresh(address)
-
-    return address
+    updatedAddress = addressCrud.update_address(db , address , data)
+    return updatedAddress
 # ------------------------------------------------------------------
 
 
 # ----------------------------DELETE ADDRESS-------------------------
-@addressRouter.delete("/address/{id}")
-def delete_address(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    address = db.query(Address).filter((Address.id == id) & (Address.userId == curCust.id)).first()
-    if address == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="address not found")
+@addressRouter.delete("/user/me/address/{address_id}")
+def delete_address(
+    *,
+    address:Annotated[addressModel.Address , Depends(addressDep.valid_address_id)],
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if address.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
-    db.delete(address)
-    db.commit()
+    addressCrud.delete_address(db , address)
 
     return {"message" : "deleted"}
 # ------------------------------------------------------------------

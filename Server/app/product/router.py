@@ -1,7 +1,6 @@
 
 from typing import Annotated
-from fastapi import APIRouter , Depends, File , HTTPException, Query, UploadFile , status
-from pydantic import constr
+from fastapi import APIRouter , Depends , HTTPException , status
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 
@@ -14,16 +13,10 @@ import app.user.models as userModel
 import app.category.crud as catCrud
 import app.brand.crud as brandCrud
 
-from app.brand.models import Brand
-from app.category.models import ProdCategory
-from app.image.models import ProductImage
-from app.product.models import Product
-from app.user.models import User
-
 
 from slugify import slugify
 
-from app.utils.cloudinary import deleteImage, uploadImage
+
 
 prodRouter = APIRouter(tags=["Product"])
 
@@ -157,47 +150,3 @@ def delete_product(
 # ------------------------------------------------------------------
 
 
-# ----------------------------ADD IMAGE-------------------------
-@prodRouter.post("/product-image/{id}")
-def add_image(* , id:int , images:list[UploadFile] = File(...) , curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)] , db:Annotated[Session , Depends(getDb)]):
-
-    product:Product = db.query(Product).filter(Product.id == id).first()
-    if product == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
-
-    try:
-        for img in images:
-            url , publicId = uploadImage(img.file)
-            
-            image = ProductImage(
-                productId = id,
-                name = img.filename,
-                url = url,
-                publicId = publicId
-            )
-
-            db.add(image)
-        
-        db.commit()
-
-        return {"message" : "added"}
-    except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="unexpected error occured")
-# ------------------------------------------------------------------
-
-
-# ----------------------------REMOVE IMAGE-------------------------
-@prodRouter.delete("/product-image/{id}")
-def remove_image(id:int , curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)] , db:Annotated[Session , Depends(getDb)]):
-
-    image:ProductImage = db.query(ProductImage).filter(ProductImage.id == id).first()
-    if image == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="image not found")
-    
-    deleteImage(image.publicId)
-
-    db.delete(image)
-    db.commit()
-
-    return {"message" : "removed"}
-# ------------------------------------------------------------------

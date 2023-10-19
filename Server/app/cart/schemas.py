@@ -2,7 +2,6 @@
 from typing import Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
-from app.product.schemas import returnProduct
 
 from app.rating.schemas import returnRating
 

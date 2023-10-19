@@ -3,6 +3,8 @@ from typing import Annotated, Optional
 from pydantic import BaseModel , EmailStr , Field, constr, validator
 from datetime import datetime
 
+import app.image.schemas as imgSchema
+
 class ProductCreate(BaseModel):
     title : str = Field(min_length=1)
     description : str = Field(min_length=1)
@@ -22,7 +24,7 @@ class ProductInDB(ProductCreate):
 
 
 class ProductReturn(ProductInDB):
-    pass 
+    images : list[imgSchema.ImageReturn]
 
     class Config:
         form_attributes = True
