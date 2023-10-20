@@ -1,19 +1,22 @@
 from secrets import token_urlsafe
-from fastapi import APIRouter, BackgroundTasks, Request , status , HTTPException , Depends
+from typing import Annotated
+from fastapi import APIRouter, BackgroundTasks, Body, Request , status , HTTPException , Depends
 from datetime import datetime , timedelta
 
 from fastapi.responses import JSONResponse
+from pydantic import EmailStr
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 
 from app.config import settings
-from app.user.models import User
+import app.user.models as userModel
+import app.user.crud as userCrud
+import app.auth.dependencies as authDep
 from app.utils.email import sendMail
 from app.utils.jwt import create_access_token, create_refresh_token, verify_token
 from app.utils.passlib import hashPassword, verifyPassword
 import app.auth.schemas as authSchema
-from app.auth.dependencies import get_current_user
 
 
 authRouter = APIRouter(tags=["Authentication"])
@@ -21,15 +24,18 @@ authRouter = APIRouter(tags=["Authentication"])
 
 # ----------------------------LOG IN-------------------------
 @authRouter.post("/login")
-def login(data:authSchema.loginUser , db:Session = Depends(getDb)):
-    
-    user:User = db.query(User).filter(User.email == data.email).first()
+def login(
+    *,
+    data:authSchema.loginUser,
+    db:Annotated[Session , Depends(getDb)]
+):
+    user:userModel.User = userCrud.get_user_by_email(db , data.email)
 
     if (user==None)  or  (not verifyPassword(data.password , user.hashed_password)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
 
-    accessToken = create_access_token({"id" : user.id})
-    refreshToken = create_refresh_token({"id" : user.id})
+    accessToken = create_access_token({"user_id" : user.id})
+    refreshToken = create_refresh_token({"user_id" : user.id})
 
     user.refresh_token = refreshToken
     db.commit()
@@ -47,19 +53,23 @@ def login(data:authSchema.loginUser , db:Session = Depends(getDb)):
 
 # ----------------------------REFRESH ACCESS TOKEN-------------------------
 @authRouter.post("/token/refresh")
-def refresh_access_token(req:Request , db:Session = Depends(getDb)):
+def refresh_access_token(
+    *,
+    req:Request,
+    db:Session = Depends(getDb)
+):
     refreshToken = req.cookies.get("refreshToken" , None)
     if refreshToken == None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
         
     payload = verify_token(refreshToken)
-    userId = payload["id"]
+    userId = payload["user_id"]
 
-    user:User = db.query(User).filter(User.id == userId).first()
+    user:userModel.User = userCrud.get_user_by_id(db , userId)
     if user==None or user.refresh_token!=refreshToken:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
     
-    accessToken = create_access_token({"id" : user.id})
+    accessToken = create_access_token({"user_id" : user.id})
 
     return {
         "token" : accessToken,
@@ -70,8 +80,11 @@ def refresh_access_token(req:Request , db:Session = Depends(getDb)):
 
 # ----------------------------LOG OUT-------------------------
 @authRouter.get("/logout")
-def logout_User(curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
-
+def logout_User(
+    *,
+    curUser:Annotated[userModel.User , Depends(authDep.get_current_user)],
+    db:Annotated[Session , Depends(getDb)]
+):
     curUser.refresh_token = None
     db.commit()
 
@@ -84,21 +97,15 @@ def logout_User(curUser:User = Depends(get_current_user) , db:Session = Depends(
 # ------------------------------------------------------------------
 
 
-# ----------------------------CHANGE PASSWORD-------------------------
-@authRouter.put("/password")
-def change_Password(data:authSchema.changePassword , curUser:User = Depends(get_current_user) , db:Session = Depends(getDb)):
-    curUser.hashed_password = hashPassword(data.password)
-    db.commit()
-    db.refresh(curUser)
-
-    return {"message" : "password changed"}
-# ------------------------------------------------------------------
-
-
 # ----------------------------GENERATE PASSWORD RESET TOKEN-------------------------
-@authRouter.post("/forgot-password")
-def generate_Pass_Reset_Token(bgtask:BackgroundTasks , data:authSchema.forgotPassRequest , db:Session = Depends(getDb)):
-    user:User = db.query(User).filter(User.email == data.email).first()
+@authRouter.post("/password/forgot")
+def generate_Pass_Reset_Token(
+    *,
+    bgtask:BackgroundTasks,
+    email:Annotated[EmailStr , Body(embed=True)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    user:userModel.User = userCrud.get_user_by_email(db , email)
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="user not found")
     
@@ -109,7 +116,7 @@ def generate_Pass_Reset_Token(bgtask:BackgroundTasks , data:authSchema.forgotPas
     user.pass_reset_token_exp = passResetTokenExp
     db.commit()
 
-    bgtask.add_task(sendPassResetToken , data.email , passResetToken)
+    bgtask.add_task(sendPassResetToken , email , passResetToken)
 
     return {"message" : "mail sent"}
 
@@ -123,10 +130,16 @@ async def sendPassResetToken(email , passResetToken):
 
 
 # ----------------------------RESET PASSWORD-------------------------
-@authRouter.post("/reset-password/{secret}")
-def reset_Password(secret:str , data:authSchema.resetPassRequest , db:Session = Depends(getDb)):
+@authRouter.post("/password/reset/{secret}")
+def reset_Password(
+    *,
+    secret:str,
+    email:Annotated[EmailStr , Body()],
+    newPassword:Annotated[str , Body(pattern=r"^.{6,20}$")],
+    db:Session = Depends(getDb)
+):
 
-    user:User = db.query(User).filter(User.email == data.email).first()
+    user:userModel.User = userCrud.get_user_by_email(db , email)
     if user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="user not found")
 
@@ -136,7 +149,7 @@ def reset_Password(secret:str , data:authSchema.resetPassRequest , db:Session = 
     if datetime.utcnow() > user.pass_reset_token_exp:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE , detail="password reset token expired")
     
-    user.hashed_password = hashPassword(data.password)
+    user.hashed_password = hashPassword(newPassword)
     user.pass_reset_token = None
     user.pass_reset_token_exp = None
     user.refresh_token = None
