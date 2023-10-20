@@ -3,7 +3,6 @@ from typing import Optional
 from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
-from app.rating.schemas import returnRating
 
 class CartCreate(BaseModel):
     count : int = Field(... , ge=1)

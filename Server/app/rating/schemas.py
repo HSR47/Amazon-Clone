@@ -1,38 +1,29 @@
 
-from typing import Optional
+from typing import Optional , Annotated
 from pydantic import BaseModel , EmailStr , Field, validator
+from datetime import datetime
 
-class ratingRequest(BaseModel):
-    star : int = Field(... , le=5 , ge=1)
-    comment : str | None
+class RatingCreate(BaseModel):
+    star : int = Field(le=5 , ge=1)
+    comment : str = Field(min_length=1)
 
-    @validator("comment")
-    def stripAndLower(cls , value:str):
-        if value == None:
-            return None
-        value = value.strip()
-        value = value.lower()
 
-        return value
-
-class returnRating(BaseModel):
+class RatingInDb(RatingCreate):
+    id : int
     userId : int
     productId : int
-    star : int
-    comment : str | None
+    createdAt : datetime
+    updatedAt : datetime
 
-    class Config():
+
+class RatingReturn(RatingInDb):
+    pass
+
+    class config:
         form_attributes = True
 
-class updateRating(BaseModel):
-    star : int = Field(... , le=5 , ge=1)
-    comment : str | None
 
-    @validator("comment")
-    def stripAndLower(cls , value:str):
-        if value == None:
-            return None
-        value = value.strip()
-        value = value.lower()
+class RatingUpdate(BaseModel):
+    star : Annotated[Optional[int] , Field(le=5 , ge=1)] = None
+    comment : Annotated[Optional[str] , Field(min_length=1)] = None
 
-        return value

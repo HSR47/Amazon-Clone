@@ -1,80 +1,94 @@
 
+from typing import Annotated
 from fastapi import APIRouter , Depends , HTTPException , status
-
+from sqlalchemy.orm import Session
 from app.database import getDb
-from sqlalchemy.orm.session import Session
-from app.product.models import Product
-from app.rating.models import Rating
 
-from app.user.models import User
-from app.auth.dependencies import get_current_customer
+import app.rating.models as ratingModel
 import app.rating.schemas as ratingSchema
+import app.rating.crud as ratingCrud
+import app.product.models as productModel
+import app.auth.dependencies as authDep
+import app.user.models as userModel
+import app.product.dependencies as prodDep
+import app.rating.dependencies as ratingDep
 
 rateRouter = APIRouter(tags=["Rating"])
 
-# ----------------------------RATE A PRODUCT-------------------------
-@rateRouter.post("/rating/{id}" , response_model=ratingSchema.returnRating)
-def rate_a_product(id:int , data:ratingSchema.ratingRequest , curCustomer:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
 
-    product = db.query(Product).filter(Product.id == id).first()
-    if product == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
+# ----------------------------GET SPECIFIC RATING-------------------------
+@rateRouter.get("/user/me/rating/{rating_id}" , response_model=ratingSchema.RatingReturn)
+def get_specific_rating(
+    *,
+    rating:Annotated[ratingModel.Rating , Depends(ratingDep.valid_rating_id)],
+    curCustomer:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if rating.userId != curCustomer.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
-    rating:Rating = db.query(Rating).filter((Rating.userId==curCustomer.id) & (Rating.productId==id)).first()
-    if rating != None:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="product already rated")
+    return rating
+# ------------------------------------------------------------------
 
-    rating = Rating(
-        userId = curCustomer.id,
-        productId = id,
-        star = data.star,
-        comment = data.comment
-    )    
 
-    db.add(rating)
-    db.commit()
-    db.refresh(rating)
+# ----------------------------GET ALL CUSTOMER RATINGS-------------------------
+@rateRouter.get("/user/me/rating" , response_model=list[ratingSchema.RatingReturn])
+def get_all_ratings(
+    *,
+    curCustomer:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    ratings = ratingCrud.get_all_ratings_by_user_id(db , curCustomer.id)
+    return ratings
+# ------------------------------------------------------------------
 
+
+# ----------------------------RATE A PRODUCT-------------------------
+@rateRouter.post("/user/me/product/{product_id}/rating" , response_model=ratingSchema.RatingReturn)
+def rate_a_product(
+    *,
+    product:Annotated[productModel.Product , Depends(prodDep.valid_product_id)],
+    data:ratingSchema.RatingCreate,
+    curCustomer:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    checkRating = ratingCrud.get_rating_by_user_id_and_product_id(db , curCustomer.id , product.id)
+    if checkRating != None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="already rated")
+
+    rating = ratingCrud.create_rating(db , curCustomer.id , product.id , data)
     return rating
 # ------------------------------------------------------------------
 
 
 # ----------------------------UPDATE RATING-------------------------
-@rateRouter.put("/rating/{id}" , response_model=ratingSchema.returnRating)
-def update_rating(id:int , data:ratingSchema.ratingRequest , curCustomer:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    product:Product = db.query(Product).filter(Product.id == id).first()
-    if product == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
-
-    rating:Rating = db.query(Rating).filter((Rating.userId==curCustomer.id) & (Rating.productId==id)).first()
-    if rating == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not rated")
-
-    rating.star = data.star
-    rating.comment = data.comment
+@rateRouter.put("/user/me/rating/{rating_id}" , response_model=ratingSchema.RatingReturn)
+def update_rating(
+    *,
+    rating:Annotated[ratingModel.Rating , Depends(ratingDep.valid_rating_id)],
+    data:ratingSchema.RatingUpdate,
+    curCustomer:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if rating.userId != curCustomer.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
-    db.commit()
-    db.refresh(rating)
-
-    return rating
+    updatedRating = ratingCrud.update_rating(db , rating , data)
+    return updatedRating
 # ------------------------------------------------------------------
 
 
 # ----------------------------REMOVE RATING-------------------------
-@rateRouter.delete("/rating/{id}")
-def delete_rating(id:int , curCustomer:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    product:Product = db.query(Product).filter(Product.id == id).first()
-    if product == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not found")
-
-    rating:Rating = db.query(Rating).filter((Rating.userId==curCustomer.id) & (Rating.productId==id)).first()
-    if rating == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="product not rated")
+@rateRouter.delete("/user/me/rating/{rating_id}")
+def delete_rating(
+    *,
+    rating:Annotated[ratingModel.Rating , Depends(ratingDep.valid_rating_id)],
+    curCustomer:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    if rating.userId != curCustomer.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
-    db.delete(rating)
-    db.commit()
-
-    return {"message" : "removed"}
+    ratingCrud.delete_rating(db , rating)
+    return {"message" : "deleted"}
 # ------------------------------------------------------------------
