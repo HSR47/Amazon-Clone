@@ -1,121 +1,136 @@
 
-from fastapi import APIRouter , Depends , HTTPException, Query , status
-from httpx import delete
+from typing import Annotated
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 
 from app.database import getDb
 from sqlalchemy.orm.session import Session
 
-from app.order.models import Order, OrderItem
-from app.cart.models import CartItem
-from app.payment.models import Payment
-
-from app.user.models import User
-from app.auth.dependencies import get_current_admin, get_current_customer, get_current_user
-from app.order.schemas import placeOrderRequest, returnOrder, updateOrderRequest
+import app.order.models as orderModel
+import app.cart.models as cartModel
+import app.user.models as userModel
+import app.auth.dependencies as authDep
+import app.order.schemas as orderSchema
+import app.address.dependecies as addressDep
+import app.address.models as addressModel
+import app.order.crud as orderCrud
+import app.product.models as prodModel
+import app.order.dependencies as orderDep
+import app.cart.crud as cartCrud
+import app.user.dependencies as userDep
 
 orderRouter = APIRouter(tags=["Order"])
 
 
 # ----------------------------PLACE ORDER-------------------------
-@orderRouter.get("/place-order")
-def place_order(data:placeOrderRequest , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
+@orderRouter.post("/user/me/address/{address_id}/order" , response_model=orderSchema.OrderReturn)
+def place_order(
+    *,
+    address:Annotated[addressModel.Address , Depends(addressDep.valid_address_id)],
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)],
+):
 
     if curCust.cartItems == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="cart is empty")
 
-    order = Order(
-        userId = curCust.id
-    )
+    newOrder:orderModel.Order = orderCrud.create_order(db , address , curCust.id)
+    
+    for i in curCust.cartItems:
+        cartItem:cartModel.CartItem = i
+        product:prodModel.Product = cartItem.product
 
-    db.add(order)
-    db.commit()
-    db.refresh(order)
+        if product.quantity < cartItem.count:
+            orderCrud.delete_order(db , newOrder)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST , detail=f"not enough quantity for product-id {product.id}")
+
+        newOrderItem:orderModel.OrderItem = orderCrud.create_order_item(db , newOrder , product , cartItem)
+    
+    db.refresh(newOrder)
 
     for i in curCust.cartItems:
-        cartItem:CartItem = i
-
-        orderItem = OrderItem(
-            orderId = order.id,
-            productId = cartItem.productId,
-            count = cartItem.count,
-            price = (cartItem.product.discountPrice).__ceil__()
-        )
-
-        db.add(orderItem)
+        cartCrud.delete_cart_item(db , i)
     
-    payment = Payment(
-        orderId = order.id,
-        method = data.method
-    )
-
-    db.add(payment)
-    db.commit()
-
-    return {"message" : "order placed"}
-# ------------------------------------------------------------------
-
-
-# ----------------------------GET ALL ORDERS-------------------------
-@orderRouter.get("/order" , response_model=list[returnOrder])
-def get_all_orders(id:int = Query(default=None) , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    
-    allOrders = db.query(Order)
-
-    if id != None:
-        customer = db.query(User).filter((User.id == id) & (User.role=="customer")).first()
-        if customer == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="customer not found")
-    
-        allOrders = allOrders.filter(Order.userId == id)
-    
-    allOrders = allOrders.all()
-    
-    return allOrders
-# ------------------------------------------------------------------
-
-
-# ----------------------------GET SPECIFIC ORDER-------------------------
-@orderRouter.get("/order/{id}" , response_model=returnOrder)
-def get_specific_order(id:int , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    order = db.query(Order).filter(Order.id == id).first()
-    if order == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="order not found")
-    
-    return order
+    return newOrder
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET CUSTOMER ORDER-------------------------
-@orderRouter.get("/cust-order" , response_model=list[returnOrder])
-def get_customer_order(curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-    allOrders = db.query(Order).filter(Order.userId == curCust.id).all()
-    return allOrders
+@orderRouter.get("/user/me/order" , response_model=list[orderSchema.OrderReturn])
+def get_customer_order(
+    *,
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)],
+):
+    allCustomerOrders = orderCrud.get_all_orders_by_user_id(db , curCust.id)
+    return allCustomerOrders
 # ------------------------------------------------------------------
 
 
 # ----------------------------GET CUSTOMER SPECIFIC ORDER-------------------------
-@orderRouter.get("/cust-order/{id}" , response_model=returnOrder)
-def get_customer_specific_order(id:int , curCust:User = Depends(get_current_customer) , db:Session = Depends(getDb)):
-
-    order = db.query(Order).filter((Order.id == id) & (Order.userId == curCust.id)).first()
-    if order == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="order not found")
+@orderRouter.get("/user/me/order/{order_id}" , response_model=orderSchema.OrderReturn)
+def get_customer_specific_order(
+    *,
+    order:Annotated[orderModel.Order , Depends(orderDep.valid_order_id)],
+    curCust:Annotated[userModel.User , Depends(authDep.get_current_customer)],
+    db:Annotated[Session , Depends(getDb)],
+):
+    if order.userId != curCust.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN , detail="forbidden")
     
     return order
 # ------------------------------------------------------------------
 
 
+# ----------------------------GET ALL ORDERS (ADMIN)-------------------------
+@orderRouter.get("/admin/me/order" , response_model=list[orderSchema.OrderReturn])
+def get_all_orders(
+    *,
+    offset:int = 0,
+    limit:int = 100,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)],
+):
+    allOrders = orderCrud.get_all_orders(db, offset, limit)    
+    return allOrders
+# ------------------------------------------------------------------
 
-# ----------------------------UPDATE ORDER STATUS-------------------------
-@orderRouter.put("/order/{id}")
-def update_order_status(id:int , data:updateOrderRequest , curAdmin:User = Depends(get_current_admin) , db:Session = Depends(getDb)):
-    
-    order:Order = db.query(Order).filter(Order.id == id).first()
-    if order == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="order not found")
-    
-    order.status = data.status
-    db.commit()
-    
-    return {"message" : "updated"}
+
+# -----------------------GET ALL ORDERS OF A CUSTOMER (ADMIN)-------------------
+@orderRouter.get("/admin/me/user/{user_id}/order" , response_model=list[orderSchema.OrderReturn])
+def get_all_orders_of_a_customer(
+    *,
+    user:Annotated[userModel.User , Depends(userDep.valid_user_id)],
+    offset:int = 0,
+    limit:int = 100,
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    allCustomerOrders = orderCrud.get_all_orders_by_user_id(db , user.id, offset, limit)
+    return allCustomerOrders
+# ------------------------------------------------------------------
+
+
+
+# ----------------------------GET SPECIFIC ORDER (ADMIN)-------------------------
+@orderRouter.get("/admin/me/order/{order_id}" , response_model=orderSchema.OrderReturn)
+def get_specific_order(
+    *,
+    order:Annotated[orderModel.Order , Depends(orderDep.valid_order_id)],
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+):    
+    return order
+# ------------------------------------------------------------------
+
+
+# ----------------------------UPDATE ORDER STATUS (ADMIN)-------------------------
+@orderRouter.put("/admin/me/order/{order_id}" , response_model=orderSchema.OrderReturn)
+def update_order_status(
+    *,
+    order:Annotated[orderModel.Order , Depends(orderDep.valid_order_id)],
+    status:Annotated[str , Body(embed=True)],
+    curAdmin:Annotated[userModel.User , Depends(authDep.get_current_admin)],
+    db:Annotated[Session , Depends(getDb)]
+):
+    updatedOrder = orderCrud.update_order_status(db , order , status)
+    return updatedOrder
 # ------------------------------------------------------------------

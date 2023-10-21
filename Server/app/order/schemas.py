@@ -5,52 +5,57 @@ from pydantic import BaseModel , EmailStr , Field, validator
 from datetime import datetime
 
 
-class placeOrderRequest(BaseModel):
-    method : str = Field(pattern=r"^(cod)$")
+
+# ----------------------------ORDER ITEM-------------------------
+class OrderItemCreate(BaseModel):
+    pass
 
 
-
-class updateOrderRequest(BaseModel):
-    status : str = Field(pattern=r"^(pending|processing|shipped|delivered|cancelled)$")
-
-
-
-
-
-
-class returnPaymentInOrder(BaseModel):
+class OrderItemInDB(OrderItemCreate):
     id : int
-    method : Enum
-    amount : int
-
-    class config:
-        form_attributes = True
-
-
-class returnOrderItemsInOrder(BaseModel):
-    # product : returnProduct
+    orderId : int
+    productId : int
     count : int
     price : int
 
-    class config:
+
+class OrderItemReturn(OrderItemInDB):
+    pass
+
+    class Config():
         form_attributes = True
+# ------------------------------------------------------------------
 
 
-class returnOrder(BaseModel):
+
+# ----------------------------ORDER-------------------------
+class OrderCreate(BaseModel):
+    pass
+
+
+class OrderInDB(OrderCreate):
     id : int
     userId : int
-    status : Enum
-    payment : returnPaymentInOrder
+    status : str
+    addressLine1 : str
+    addressLine2 : str
+    postalCode : str
+    country : str
+    state : str
+    city : str
+    mobile : str
     createdAt : datetime
     updatedAt : datetime
-    orderItems : list[returnOrderItemsInOrder]
 
-    class config:
+
+class OrderReturn(OrderInDB):
+    pass
+
+    orderItems : list[OrderItemReturn]
+
+    class Config():
         form_attributes = True
-
-
-
-
+# ------------------------------------------------------------------
 
 
 

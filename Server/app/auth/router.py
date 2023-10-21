@@ -16,7 +16,6 @@ import app.auth.dependencies as authDep
 from app.utils.email import sendMail
 from app.utils.jwt import create_access_token, create_refresh_token, verify_token
 from app.utils.passlib import hashPassword, verifyPassword
-import app.auth.schemas as authSchema
 
 
 authRouter = APIRouter(tags=["Authentication"])
@@ -26,12 +25,13 @@ authRouter = APIRouter(tags=["Authentication"])
 @authRouter.post("/login")
 def login(
     *,
-    data:authSchema.loginUser,
+    email:Annotated[EmailStr , Body()],
+    password:Annotated[str , Body()],
     db:Annotated[Session , Depends(getDb)]
 ):
-    user:userModel.User = userCrud.get_user_by_email(db , data.email)
+    user:userModel.User = userCrud.get_user_by_email(db , email)
 
-    if (user==None)  or  (not verifyPassword(data.password , user.hashed_password)):
+    if (user==None)  or  (not verifyPassword(password , user.hashed_password)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="invalid credentials")
 
     accessToken = create_access_token({"user_id" : user.id})
